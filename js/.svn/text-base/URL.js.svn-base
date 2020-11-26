@@ -1,0 +1,4 @@
+var _URL = 'http://183.66.239.14:35643/deskNurse/';
+var SERVERIP='183.66.239.14:35643';
+var _DEVICE = '1';
+var URL_ST='http://183.66.239.14:8000';

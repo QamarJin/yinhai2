@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.area {
+				margin: 20px auto 0px auto;
+			}
+			
+			.mui-input-group {
+				margin-top: 10px;
+			}
+			
+			.mui-input-group:first-child {
+				margin-top: 20px;
+			}
+			
+			.mui-input-group label {
+				width: 22%;
+			}
+			
+			.mui-input-row label~input,
+			.mui-input-row label~select,
+			.mui-input-row label~textarea {
+				width: 78%;
+			}
+			
+			.mui-checkbox input[type=checkbox],
+			.mui-radio input[type=radio] {
+				top: 6px;
+			}
+			
+			.mui-content-padded {
+				margin-top: 25px;
+			}
+			
+			.mui-btn {
+				padding: 10px;
+			}
+			
+			.mui-table-view:after {
+			    position: absolute;
+			    right: 0;
+			    bottom: 0;
+			    left: 0;
+			    height: 0;
+			    content: '';
+			    -webkit-transform: scaleY(.5);
+			    transform: scaleY(.5);
+			    background-color: #c8c7cc;
+			}
+			
+		</style>
+
+	</head>
+
+	<body style="background: #FFF;">
+		<div style="height: 18rem;background: url(image/login/bg.png) no-repeat;
+			background-size:cover ;padding-top: 4rem;">
+			<div style="width: 8rem;height: 8rem;margin:0 auto;
+				background: url(image/login/love.png) no-repeat;background-size:cover ;"></div>
+			<div style="height: 3rem;line-height: 3rem;margin-top: 1rem;color: #0da0e4;
+				font-size: 1.5rem;text-align: center;">移动护理</div>
+		</div>
+		<div id="loginMsg" style="color: red;text-align: center;">
+		</div>
+		<div style="height: 7rem;">
+			<div style="height: 3.5rem;width: 98%;" class="mui-row">
+				<div class="mui-col-sm-3" style="width: 16%;padding-top: 1.5rem;">
+					<div style="width: 1.5rem;height: 1.5rem;background: url(image/login/user.png);
+						background-size: cover;margin: 0 auto;"></div>
+				</div>
+				<div class="mui-col-sm-9" style="border-bottom: 1px solid #d1eaf5;width: 75%;padding-top: 1rem;">
+					<input style="color: #666; font-size: 1.2rem;border: none;height: 2.5rem;
+						line-height: 2.5rem;padding: 0;margin:0;text-align: center;" id='loginid' 
+						placeholder="请输入账号"/>
+				</div>
+			</div>
+			<div style="height: 3.5rem;width: 98%;" class="mui-row">
+				<div class="mui-col-sm-3" style="width: 16%;padding-top: 1.5rem;">
+					<div style="width: 1.5rem;height: 1.5rem;background: url(image/login/lock.png);
+						background-size: cover;margin: 0 auto;"></div>
+				</div>
+				<div class="mui-col-sm-9" style="border-bottom: 1px solid #d1eaf5;width: 75%;padding-top: 1rem;">
+					<input style="color: #666; font-size: 1.2rem;border: none;height: 2.5rem;
+						line-height: 2.5rem;padding: 0;margin: 0;text-align: center;padding-right: 1rem;" id='password' type="password"
+						placeholder="请输入密码"/>
+				</div>
+			</div>
+		</div>
+		<div style="margin-top: 2rem;text-align: center;">
+			<button id="btnLogin" style="width: 80%;height: 3rem;font-size: 1.5rem;color: #FFF; 
+				background: #0da0e4;border-radius:1.5rem ;border: none;">登&nbsp;&nbsp;录</button>
+		</div>
+		<div id="imgBottom" style="position: absolute;left: 0;bottom: 0;height: 4rem;width: 100%;
+			background:url(image/login/dbsw.png) no-repeat;background-size:cover ;"></div>
+			
+		<div id="serveripdiv" style="height: 10rem;width: 80%;background: #F6F6F6;position: absolute;left: 10%;
+			bottom: 4.5rem;z-index: 10;border-radius:10px ;padding: 2rem 0.5rem;display: none;">
+			<input id='serverip' type="text" class="mui-input-clear mui-input" placeholder="请输入服务器IP">
+			<button id="btnSave" class="mui-btn mui-btn-block mui-btn-primary">保存</button>
+		</div>
+		
+		<div id="selectDept" style="position: absolute;bottom: 0;left: 0;width: 100%;height: 19rem;z-index: 10;
+			background:#FFF;display: none;opacity: 0;padding-top: 2rem;">
+			<div style="width: 78%;margin: 0 auto;background: #FBFBFB;border-radius: 0.5rem;
+				border: 1px solid #0FA3E5;">
+				<ul class="mui-table-view" id="deptul">
+				</ul>
+			</div>
+		</div>
+		
+		<script src="js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="js/scanner.js" ></script>
+		<script src="js/zepto.fx.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/URL.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			
+			window.addEventListener('closeScanLogin', function() {
+				scanner.close();
+			});
+			
+			mui.init({
+				gestureConfig:{
+					tap: true, //默认为true
+					doubletap: false, //默认为false
+					longtap: true, //默认为false
+					swipe: false, //默认为true
+					drag: false, //默认为true
+					hold:false,//默认为false，不监听
+					release:false//默认为false，不监听
+				}
+			});
+			document.getElementById('imgBottom').addEventListener('longtap',function(event){
+		    	$('#serveripdiv').show();
+		    });
+		    var serverip="";
+			mui.plusReady(function(){
+				keybordEvent();
+				//scanLogin();
+				$('#btnLogin').on('tap',function(){
+					login();
+				});
+				serverip = localStorage.getItem("serverip");
+				if(serverip==null||serverip==""){
+					serverip = SERVERIP;
+					localStorage.setItem("serverip",serverip);
+				}
+				$('#serverip').val(serverip);
+				$('#btnSave').bind('tap', function() {
+					save();
+				});
+			});
+			//添加返回事件，重新注册扫码事件
+			window.addEventListener("scanLogin",function(){
+				// scanLogin();
+			});
+			//账号密码登录
+			function login(){
+				var serverip = localStorage.getItem("serverip");
+				var loginid = $('#loginid').val();
+				var pwd = $('#password').val();
+				if(!loginid){
+					mui.toast("请输入账号");
+					return false;
+				}
+				if(!pwd){
+					mui.toast("请输入密码");
+					return false;
+				}
+				var param = {};
+				param['loginid'] = loginid;
+				param['password'] = pwd;
+				mui.ajax('http://'+serverip+'/deskNurse/app/login.do',{
+					data:param,
+					dataType:'json',
+					type:'post',
+					success:function(data){
+						if(data.result=='success'){
+							loginSuccess(loginid);
+						}else{
+							mui.toast(data.msg);
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("网络连接错误，请检查网络");
+					}
+				});
+			}
+			//扫码登录
+			function scanLogin(){
+				scanner.scan(function(data){
+					var loginid;
+					if(data.success){
+						if("gp"==data.value.substr(0,2)){
+							var valen = data.value.length;
+							loginid = data.value.substr(2,valen);
+						}else{
+							loginid = data.value;
+						}
+					}else{
+						scanLogin();//失败后重新注册扫码监听
+						mui.toast("扫码失败");
+						return false;
+					}
+					//检查用户是否存在，存在则登录
+					checkUser(loginid);
+				},function(){
+					scanLogin();//失败后重新注册扫码监听
+					mui.toast("系统异常");
+				})
+			}
+			//检查用户是否存在
+			function checkUser(loginid){
+				var serverip = localStorage.getItem("serverip");
+				mui.ajax('http://'+serverip+'/deskNurse/app/scanLogin.do',{
+					data:{
+						'loginid':loginid
+					},
+					dataType:'json',
+					type:'post',
+					success:function(data){
+						if(data.success){
+							loginSuccess(loginid);
+						}else{
+							scanLogin();//失败后重新注册扫码监听
+							mui.toast("没有该用户，请核对");
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						scanLogin();//失败后重新注册扫码监听
+						mui.toast("系统异常");
+					}
+				});
+			}
+
+			function loginSuccess(loginid){
+				localStorage.setItem("islogin","1");
+				localStorage.setItem("loginid",loginid);
+				var serverip = localStorage.getItem("serverip");
+				mui.ajax('http://'+serverip+'/deskNurse/app/getEmp.do',{
+					data:{
+						'loginid':loginid
+					},
+					dataType:'json',
+					type:'post',
+					success:function(data){
+						if(data.hasArea==1){
+							localStorage.setItem("hasArea",'1');
+							var area = data.area;
+							if(area.length>1){
+								$('#deptul').empty();
+								for(var i=0;i<area.length;i++){
+									var li = '<li deptid="'+area[i].areaid+'" class="mui-table-view-cell" style="text-align: center;color: #0FA3E5;">'+
+												area[i].name+'</li>';
+									$('#deptul').append(li);
+								}
+								deptClick(data.emp,'area');
+								$("#selectDept").show();
+								$("#selectDept").animate(
+									{
+										opacity: 1
+									},
+									700,
+							        'easy-in'
+							    );
+							}else{
+								localStorage.setItem("areaid",area[0].areaid);
+								mui.openWindow({
+									id:'index',
+									url:'index.html',
+									extras:{
+										"emp":data.emp,
+										"deptname":area[0].name
+									}
+								});
+							}
+						}else{
+							localStorage.setItem("hasArea",'0');
+							var dept = data.dept;
+							if(dept.length>1){
+								$('#deptul').empty();
+								for(var i=0;i<dept.length;i++){
+									var li = '<li deptid="'+dept[i].deptid+'" class="mui-table-view-cell" style="text-align: center;color: #0FA3E5;">'+
+												dept[i].name+'</li>';
+									$('#deptul').append(li);
+								}
+								deptClick(data.emp,'dept');
+								
+								$("#selectDept").show();
+								$("#selectDept").animate(
+									{
+										opacity: 1
+									},
+									700,
+							        'easy-in'
+							    );
+							}else{
+								localStorage.setItem("deptid",dept[0].deptid);
+								mui.openWindow({
+									id:'index',
+									url:'index.html',
+									extras:{
+										"emp":data.emp,
+										"deptname":dept[0].name
+									}
+								});
+							}
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("系统异常");
+					}
+				});
+			}
+			
+			function deptClick(emp,type){
+				$('.mui-table-view-cell').on('tap',function(){
+					var id = $(this).attr("deptid");
+					var deptname = $(this).text();
+					if(type=='area'){
+						localStorage.setItem("areaid",id);
+					}else{
+						localStorage.setItem("deptid",id);
+					}
+					$("#selectDept").hide();
+					//打开主页
+					mui.openWindow({
+						id:'index',
+						url:'index.html',
+						extras:{
+							"emp":emp,
+							"deptname":deptname
+						}
+					});
+				});
+			}
+			
+			function save() {
+				localStorage.setItem("serverip",$('#serverip').val());
+				$('#serveripdiv').hide();
+			}
+
+			//利用键盘弹出窗口高度会改变来模拟键盘弹出事件
+	        function keybordEvent(){
+	        	var winHeight = $(window).height(); 
+				$(window).resize(function(){
+				   	var thisHeight=$(this).height();
+				    if(winHeight - thisHeight >50){
+				        //窗口发生改变(大),故此时键盘弹出
+				         //当软键盘弹出，在这里面操作
+				         $("#imgBottom").hide();
+				    }else{
+				        //窗口发生改变(小),故此时键盘收起
+				        //当软键盘收起，在此处操作
+				        $("#imgBottom").show();
+				    }
+				});
+	        }
+		</script>
+	</body>
+
+</html>

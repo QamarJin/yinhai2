@@ -1,0 +1,88 @@
+{
+  "index.html": {
+    "resources": [
+      "html/wd.html"
+    ],
+    "refer": [
+      "html/hzxs.html",
+      "html/yzgl.html",
+      "html/home.html",
+      "html/wd.html",
+      "html/tzlr.html"
+    ]
+  },
+  "login.html": {
+    "refer": [
+      "index.html"
+    ]
+  },
+  "html/yzgl.html": {
+    "refer": [
+      "html/patientList.html"
+    ]
+  },
+  "html/home.html": {
+    "refer": [
+      "html/bbcj.html",
+      "html/dpeiye.html",
+      "html/ops.html",
+      "html/patientList.html",
+      "html/fpbed.html",
+      "html/function.html",
+      "html/workQuery.html",
+      "html/advinceQuery.html",
+      "html/execpy.html",
+      "html/exechd.html",
+      "html/pyWindow.html",
+      "html/noteQuery.html"
+    ]
+  },
+  "html/wd.html": {
+    "refer": [
+      "html/deptSet.html",
+      "html/modifiyPassword.html"
+    ]
+  },
+  "html/patientList.html": {
+    "refer": [
+      "html/patientDetail.html"
+    ]
+  },
+  "html/hzxs.html": {
+    "refer": [
+      "html/patientList.html",
+      "html/note.html",
+      "html/voice.html",
+      "html/audioRecord.html"
+    ]
+  },
+  "html/tzlr.html": {
+    "refer": [
+      "html/patientList.html"
+    ]
+  },
+  "html/bbcj.html": {
+    "refer": [
+      "html/bbhd.html"
+    ]
+  },
+  "html/function.html": {
+    "refer": [
+      "html/noteQuery.html",
+      "html/patientList.html",
+      "html/workQuery.html",
+      "html/advinceQuery.html",
+      "html/function-edit.html"
+    ]
+  },
+  "html/noteQuery.html": {
+    "refer": [
+      "html/patientList.html"
+    ]
+  },
+  "html/pyWindow.html": {
+    "refer": [
+      "html/exechd.html"
+    ]
+  }
+}

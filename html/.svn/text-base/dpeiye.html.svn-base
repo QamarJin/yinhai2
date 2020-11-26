@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.dbul{
+				padding: 0;
+				margin: 0;
+			}
+			.dbul>li{
+				list-style: none;
+			}
+			
+			.dbul>li{
+				border-bottom: 0.5rem #F6F6F6 solid;
+				padding: 0.5rem;
+			}
+			
+			.dbul>li>span{
+				color: #444444;
+			}
+			.sexImg{
+				margin-top: 0.7rem;
+				width: 2.5rem;
+				height: 2.5rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			
+			.sexImg.boy{
+				background-image:url('../image/hzcx/boy.png') ;
+			}
+			
+			.sexImg.girl{
+				background-image:url('../image/hzcx/girl.png') ;
+			}
+			
+			.hljbImg{
+				position: relative;
+				width: 0.8rem;
+				height: 0.6rem;
+				left: 1.7rem;
+				bottom: 0.6rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			.hljbImg.one{
+				background-image:url('../image/hzcx/1.png') ;
+			}
+			.hljbImg.two{
+				background-image:url('../image/hzcx/2.png') ;
+			}
+			.hljbImg.three{
+				background-image:url('../image/hzcx/3.png') ;
+			}
+			.hljbImg.teji{
+				background-image:url('../image/hzcx/teji.png') ;
+			}
+			.hljbImg.icu{
+				background-image:url('../image/hzcx/ICU.png') ;
+			}
+			.my-card-content{
+				border-top: 1px #ECECEC solid;
+			}
+			.pint_times_num{
+				color: #FFF;
+				background: #0FA3E5;
+				margin: 0 0.4rem 0 0.4rem;
+				width: 14px;
+				height: 14px;
+				border-radius: 100px;
+				padding-left: 6px;
+				padding-right: 6px;
+			}
+		</style>
+	</head>
+
+	<body style="background: #fff;" onscroll="onBodyScroll()">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span id="winTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">待配液</span>
+		</header>
+		
+		<header id="searchHeader" class="mui-bar mui-bar-nav" style="background: #FFF;display: none;padding: 0;">
+			<div class="mui-input-row mui-search" style="margin-top: 0.1rem;background: #FFF;padding: 0 1rem;">
+				<input id="search_" type="search" class="mui-input mui-input-clear" placeholder="住院号/床号/姓名" 
+					style="margin-bottom: 0;background: #F6F6F6;">
+			</div>
+		</header>
+		
+		<div id="pullupRefresh" class="mui-content" style="background: #FFF;">
+			<div id="searchbox" class="mui-input-row mui-search" style="margin-top: 0.7rem;background: #FFF;padding: 0 0.5rem;">
+				<input id="search" type="search" class="mui-input mui-input-clear" placeholder="住院号/床号/姓名" 
+					style="margin-bottom: 0;background: #F6F6F6;">
+			</div>
+			<!--<div id="loading" style="width: 100%;text-align: center;margin-top: 0.5rem;">
+				<span class="mui-spinner"></span>
+			</div>-->
+			<ul id="daibanul" class="dbul">
+				
+			</ul>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init({
+			pullRefresh: {
+				container: '#pullupRefresh',
+				up: {
+					height: 50,
+					contentnomore: '没有更多数据了',
+					contentrefresh: '正在加载...',
+					callback: pullupRefresh
+				}
+			}
+		});
+		mui.plusReady(function(){
+			pullupRefresh();
+		});
+		var keyflag=0;
+		$("#search").on('keydown',function(event){
+			if(event.which===13){
+				keyflag=1;
+			}
+		});
+		$("#search_").on('keydown',function(event){
+			if(event.which===13){
+				keyflag=2;
+			}
+		});
+		$('#search,#search_').on('keydown',function(event){
+			if(event.which===13){
+				curPage=0;
+				$("#daibanul").html("");
+				pullupRefresh();
+				mui('#pullupRefresh').pullRefresh().refresh(true);
+				mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+				$(this).blur();
+			}
+		});
+		
+		var curPage = 0;
+		function pullupRefresh() {
+			var param = plus.webview.currentWebview();
+			var st;
+			if(param.stutas=='init'&&param.itemType=='sy'){
+				st = '待输液配液';
+			}else if(param.stutas=='hd'&&param.itemType=='sy'){
+				st = '待输液核对';
+			}else if(param.stutas=='zx'&&param.itemType=='sy'){
+				st = '待输液执行';
+			}else if(param.stutas=='wc'&&param.itemType=='sy'){
+				st = '待输液完成';
+			}else if(param.itemType=='zs'){
+				st = '待注射';
+			}else if(param.itemType=='ps'){
+				st = '待做皮试';
+			}else if(param.itemType=='wh'){
+				st = '待做雾化';
+			}else if(param.itemType=='kf'){
+				st = '待口服'
+			}
+			$('#winTitle').html(st);
+			var hasArea = localStorage.getItem("hasArea");
+			param['hasArea']  = hasArea;
+			if(hasArea==1){
+				param['areaid'] = localStorage.getItem("areaid");
+			}else{
+				param['deptid'] = localStorage.getItem("deptid");
+			}
+			var hasSetDept = localStorage.getItem("hasSetDept");
+			if(hasSetDept == 1){
+				param['hasSetDept'] = 1;
+				param['deptid'] = localStorage.getItem("deptid");
+			}else{
+				param['hasSetDept'] = 0;
+			}
+			param['param'] = '';
+			if(keyflag==1){
+				param['param']=$("#search").val()!=''?$("#search").val():'';
+			}
+			if(keyflag==2){
+				param['param']=$("#search_").val()!=''?$("#search_").val():'';
+			}
+           	param['curPage']=curPage;
+           	var serverip = localStorage.getItem("serverip");
+           	mui.ajax('http://'+serverip+'/deskNurse/app/getAdvinceByDeptid.do',{
+           		 type: 'POST',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	<!--$('#loading').hide();-->
+		        	curPage++;
+		        	var advince = data;
+		        	if(advince.length>0){
+		        		for(var i=0;i<advince.length;i++){
+							var item = '<li>'+
+								'<div class="mui-row" style="height: 4rem;">'+
+									'<div class="mui-col-sm-2" style="width: 17%;">';
+								var sexClass;
+								var nlClass;
+								if(advince[i].sex=='1'){
+									sexClass = 'boy';
+								}else{
+									sexClass = 'girl';
+								}
+								
+								if(advince[i].nl=='1'){
+									nlClass = 'one';
+								}else if(advince[i].nl=='2'){
+									nlClass = 'two';
+								}else if(advince[i].nl=='3'){
+									nlClass = 'three';
+								}else if(advince[i].nl=='4'){
+									nlClass = 'teji';
+								}
+								var pnameSize;
+								if(advince[i].pname.length>5){
+									pnameSize="font-size:12px;"
+								}
+								
+								item+=	'<div class="sexImg '+sexClass+'"></div>'+
+										'<div class="hljbImg '+nlClass+'"></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-4" style="width:42% ;">'+
+											'<div style="height: 2rem;"><span style="font-weight: 600;line-height: 2rem;'+pnameSize+'">'+advince[i].pname+'</span></div>'+
+											'<div style="height: 2rem;"><span style="line-height: 2rem;">床号:</span><span style="color: #0FA3E5;line-height: 2rem;">'+advince[i].bedno+'</span></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-6" style="width: 40%;">'+
+										'<div><span style="float: right;line-height: 2rem;">住院号:'+advince[i].zyh+'</span></div>';
+								
+								if (advince[i].outflag == '1') {
+									item+='<div><span style="line-height: 2rem;color:red">[出]</span></div>';
+								}
+								
+								if (advince[i].isend == '1') {
+									item+='<div><span style="line-height: 2rem;color:red">[停]</span></div>';
+								}
+								item+=	'<div><span style="float: right;line-height: 2rem;">频次:';
+								
+								if(!advince[i].pinci){
+									item+='qd';
+								}else{
+									item+=advince[i].pinci;
+								}
+								if(advince[i].pinci&&advince[i].pinci!='qd'&&
+									advince[i].itemtype!='kf'&&advince[i].itemtype!='ps'){
+									var prtt = parseInt(advince[i].print_times)+1
+									item+='<span class="pint_times_num">'+prtt+'</span>'
+								}
+								item+='</span></div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="my-card-content" >'+
+			                        '<ul class="myul-noborder"><li>'+advince[i].doctor_note+'</li>';
+			                    var arr = advince[i].itemname.split('$&');
+			                    var dose = advince[i].dose;
+								var unit = advince[i].unit;
+								var doses =typeof(dose)=="undefined"?'':dose.split('$&');
+								var units =typeof(unit)=="undefined"?'':unit.split('$&');
+			                    if(arr){
+			                    	for(var j=0;j<arr.length;j++){
+			                    		var dw='';
+			                    		if(typeof(doses[j])!="undefined"){
+											dw='['+doses[j]+units[j]+']';
+										}
+			                    		item+='<li>'+
+			                        			'<span class="yzglContent"><div class="transverse tr-blue"></div>'+arr[j]+dw+'</span>'+
+			                        		  '</li>';
+			                    	}
+			                    }else{
+			                    	item+='<li>'+
+			                        		'<span class="yzglContent"><div class="transverse tr-blue"></div>'+advince[i].itemname+'</span>'+
+			                        	  '</li>';
+			                    }
+			                    item+= '</ul></div></li>';
+							$('#daibanul').append(item);
+						}
+						mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+		        	}else{
+		        		mui('#pullupRefresh').pullRefresh().endPullupToRefresh(true);
+		        	}
+		       }
+           	});
+		}
+		
+        function onBodyScroll(){
+        	var height = $('body').scrollTop();
+        	if(height>40){
+        		$("#header").hide();
+        		$("#searchbox").hide();
+        		$("#searchHeader").show();
+        	}else{
+        		$("#header").show();
+        		$("#searchbox").show();
+        		$("#searchHeader").hide();
+        	}
+        }
+        
+	</script>
+</html>

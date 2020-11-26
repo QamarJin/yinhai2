@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		
+		<style type="text/css">
+			body{
+				background: #F6F6F6;
+			}
+			.sexImg{
+				width: 2.5rem;
+				height: 2.5rem;
+				margin-top: 0.75rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			
+			.sexImg.boy{
+				background-image:url('../image/hzcx/boy.png') ;
+			}
+			
+			.sexImg.girl{
+				background-image:url('../image/hzcx/girl.png') ;
+			}
+			
+			.hljbImg{
+				position: relative;
+				width: 0.8rem;
+				height: 0.6rem;
+				left: 1.7rem;
+				bottom: 0.6rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			.hljbImg.one{
+				background-image:url('../image/hzcx/1.png') ;
+			}
+			.hljbImg.two{
+				background-image:url('../image/hzcx/2.png') ;
+			}
+			.hljbImg.three{
+				background-image:url('../image/hzcx/3.png') ;
+			}
+			.hljbImg.teji{
+				background-image:url('../image/hzcx/teji.png') ;
+			}
+			.hljbImg.icu{
+				background-image:url('../image/hzcx/ICU.png') ;
+			}
+			
+			span{
+				color: #666;
+				line-height: 2rem;
+			}
+			.mui-table-view{
+				background: #FFF;
+			}
+			.mui-table-view-cell{
+				margin: 0;
+				padding: 0.3rem 0 0.3rem 0.3rem;
+			}
+			.paytype{
+				border-radius: 0.3rem;
+				padding: 0 0.2rem 0 0.2rem;
+				border: 1px #F75758 solid;
+				color: #F75758;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">病人信息</span>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+			<div class="mui-input-row mui-search" style="margin-top: 0.7rem;background: #FFF;">
+				<input id="search" type="search" class="mui-input-clear" placeholder="住院号/床号/姓名" 
+					style="margin-bottom: 0;background: #F6F6F6;">
+			</div>
+			<ul class="mui-table-view" id="list">
+				
+			</ul>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var detail = 1;
+		var homedata;
+		mui.plusReady(function(){
+			homedata = plus.webview.currentWebview();
+			$("#search").bind('keydown',function(event){
+				if(event.which==13){
+					load();
+					$(this).blur();
+				}
+			});
+			if(homedata.detail==0){
+				detail = parseInt(homedata.detail);
+			}
+			load();
+		});
+		//detail为0时选择病人，1时查询病人详细信息
+		function openDetail(id){
+			if(detail==0){
+				mui.back();
+				if(homedata.tabFlag==1){
+					var tzlr = plus.webview.getWebviewById("tzlr");
+					mui.fire(tzlr,'selectPatient',{id:id});
+				}
+				if(homedata.tabFlag==2){
+					var yzgl = plus.webview.getWebviewById("yzgl");
+					mui.fire(yzgl,'loadAdvince',{id:id});
+				}
+				if(homedata.tabFlag==3){
+					var hzxs = plus.webview.getWebviewById("hzxs");
+					mui.fire(hzxs,'selectPatient',{id:id});
+				}
+				if(homedata.tabFlag==4){
+					//var note = plus.webview.getWebviewById("appmenu");
+					var note = plus.webview.getWebviewById("daiban017");
+					mui.fire(note,'selectPatient',{id:id})
+				}
+			}else{
+				mui.openWindow({
+					id: 'patientDetail',
+				    url: 'patientDetail.html',
+				    extras: {patientid:id},
+				    reload:true,
+				    delay:500
+				});
+			}
+		}
+		
+		function load(){
+			var qfflag = homedata.qfflag;
+			var param = {param:$("#search").val()};
+			if(qfflag){
+				param['qfflag']=qfflag;
+			}
+			$('#list').html('');
+			var serverip = localStorage.getItem("serverip");
+			
+			var hasArea = localStorage.getItem("hasArea");
+			param['hasArea']  = hasArea;
+			if(hasArea==1){
+				param['areaid'] = localStorage.getItem("areaid");
+			}else{
+				param['deptid'] = localStorage.getItem("deptid");
+			}
+			
+			var hasSetDept = localStorage.getItem("hasSetDept");
+			
+			if(hasSetDept == 1){
+				param['hasSetDept'] = 1;
+				param['deptid'] = localStorage.getItem("deptid");
+			}else{
+				param['hasSetDept'] = 0;
+			}
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getPatient.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(list){
+			    	for(var i=0;i<list.length;i++){
+			    		var li = '<li onclick="openDetail(\''+list[i].id+'\')" class="mui-table-view-cell">'+
+							'<div class="mui-row" style="width: 100%;">'+
+								'<div class="mui-col-sm-2" style="width: 15%;">'+
+									'<div class="sexImg ';
+						if(list[i].sex==1){
+							li+='boy';
+						}else{
+							li+='girl';
+						}
+						li += '"></div>'+
+									'<div class="hljbImg ';
+						if(list[i].nl=='1'){
+							li+='one';
+						}else if(list[i].nl=='2'){
+							li+='two';
+						}else if(list[i].nl=='3'){
+							li+="three";
+						}else if(list[i].nl=='4'){
+							li+='teji';
+						}else if(list[i].nl=='icu'){
+							li+='icu';
+						}else{
+							li+='one';
+						}
+						li += '"></div>'+
+								'</div>'+
+								'<div class="mui-col-sm-10" style="85%">'+
+									'<div style="height: 2rem;">';
+						if(list[i].fqflag==1){
+							li+='<span style="color: #F75758;font-weight: 600;">'+list[i].name+'</span>';
+						}else{
+							li+='<span style="color: #444;font-weight: 600;">'+list[i].name+'</span>';
+						}
+
+						var tmp_bedno;
+						if(list[i].bedno){
+							tmp_bedno = list[i].bedno;
+						}else{
+							tmp_bedno = '未分床';
+						}
+						var zyhStyle='style="margin-left:5rem;"';
+						if(list[i].name.length>4){
+							zyhStyle='style="margin-left:1rem;"';
+						}
+						li +='<span '+zyhStyle+'>住院号:'+list[i].zyh+'</span>'+
+									'</div>'+
+									'<div style="height: 2rem;">'+
+										'<span>'+list[i].age+list[i].ageunit+'</span>'+
+										'<span style="margin-left:3.5rem;">床号:<span style="color: #0FA3E5;">'+tmp_bedno+'</span></span>'+
+										'<span class="paytype" style="margin-left:1.5rem;">'+list[i].paytype+'</span>';
+						li+='</div></div></div></li>';
+						$('#list').append(li);
+			    	}
+		        }
+		    });
+			
+		}
+		
+	</script>
+</html>

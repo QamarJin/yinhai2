@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>医嘱查询</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../css/mui.min.css">
+	<link rel="stylesheet" href="../css/common.css"/>
+
+	<style>
+			.mui-card-header.mui-card-media{
+				display:flex;
+			}
+			.mui-col-sm-10{
+				line-height: 2rem;
+			}
+			.mui-col-sm-10>span{
+				margin-left: 1rem;
+			}
+			.mui-col-sm-10>span:first-child{
+				font-weight: 800;
+				color: #444;
+			}
+			.mui-col-sm-10>span:nth-child(2){
+				color: #666;
+			}
+			.mui-col-sm-10>span:last-child{
+				color: #666;
+			}
+			body{
+				background: #FFF;
+			}
+			.mui-card-link{
+				font-size:1rem ;
+				color: #444;
+			}
+			.mui-card-link.active{
+				color: #0FA3E5;
+			}
+
+			.advince-header{
+				margin: 0 1rem;
+				padding: 0.5rem;
+				line-height: 1.5rem;
+				border-bottom: 1px solid #F6F6F6;
+			}
+			.advince-header>span{
+				font-weight: 700;
+				color: #444;
+			}
+			.advince-header>span:nth-child(2){
+				margin-left: 2rem;
+			}
+			.advince-header>span:nth-child(3){
+				margin-left: 2rem;
+			}
+			.advince-content{
+				padding: 0.5rem 0 0.5rem 1.5rem;
+				line-height: 1.5rem;
+				border-bottom: 1px solid #BBBBBB;
+				color: #666;
+			}
+			.advince-content:last-child{
+				border-bottom:none;
+			}
+
+			.advince-content>span{
+				color: #0FA3E5;
+				font-size: 1.5rem;
+				margin-right: 0.3rem;
+			}
+			.mui-card-content{
+				padding-bottom: 1rem;
+				overflow-y: auto;
+			}
+			.advince-type{
+				display: none;
+			}
+			.advince-type.active{
+				display: block;
+			}
+			.mui-badge{
+				background: red;
+				color: white;
+				margin-bottom: 1rem;
+			}
+
+			.search-box{
+				position: absolute;
+				top: 3rem;
+				left: 0;
+				width: 94%;
+				margin: 3rem 3% 0 3%;
+				height: 12rem;
+				background: #F0F0F0;
+				z-index: 99;
+				border-radius:5px ;
+				display: none;
+				overflow-y:auto ;
+			}
+			.mui-table-view-cell>span:first-child{
+				color: #444;
+				font-weight: 700;
+				margin-left: 0;
+			}
+
+			.mui-table-view-cell>span{
+				margin-left: 1.2rem;
+				color: #666;
+			}
+
+			.mui-placeholder{
+				text-align: left!important;
+				padding-left: 15%;
+			}
+
+			.myselect{
+				background: #999999;
+				padding: 0 0.2rem;
+				margin-left: 0.5rem;
+				color: #FFFFFF;
+				height: 2rem;
+				width: auto;
+			}
+
+			.myselect>option{
+				padding: 0;
+			}
+		</style>
+</head>
+
+<body>
+<header id="header" class="mui-bar mui-bar-nav header-android">
+	<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+	<span id="winTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">扫描二维码或者搜索病人</span>
+</header>
+<div class="mui-content" style="background: #FFFFFF;">
+	<div style="padding: 0 0.5rem;margin-top: 0.7rem;">
+		<div id="searchbox" class="mui-input-row mui-search" style="background: #FFF;
+					float: left;width: 70%;">
+			<input id="search" type="search" class="mui-input mui-input-clear" placeholder="住院号/床号/姓名"
+				   style="margin-bottom: 0;background: #F6F6F6;">
+		</div>
+		<div style="float: left;width: 29%;">
+			<select class="myselect">
+				<option value="0">全部医嘱</option>
+				<option value="1">已执行医嘱</option>
+				<option value="2">未执行医嘱</option>
+			</select>
+		</div>
+	</div>
+	<div class="search-box">
+		<ul id="seach-box-ul" class="mui-table-view">
+		</ul>
+	</div>
+	<div class="mui-card" style="clear: both;">
+		<div id="btnRefreshAdvince" class="btnRefresh">
+			<a style="margin-right: 0.1rem;"><span id="freshLog" class="mui-icon mui-icon-loop" style="color: #999;font-size: 1.2rem;font-weight: 600;"></span></a>
+		</div>
+
+		<div class="mui-card-header">
+			<div class="mui-row" id="patientInfo">
+			</div>
+		</div>
+		<div class="mui-card-content">
+			<div id="syItem" class="advince-type active">
+			</div>
+			<div id="kfItem" class="advince-type">
+			</div>
+			<div id="zsItem" class="advince-type">
+			</div>
+			<div id="whItem" class="advince-type">
+			</div>
+			<div id="psItem" class="advince-type">
+			</div>
+			<div id="jyItem" class="advince-type">
+			</div>
+			<div id="qtItem" class="advince-type">
+			</div>
+		</div>
+		<div class="mui-card-footer">
+			<a id="syLink" class="mui-card-link active" target="syItem">输液</a>
+			<a id="kfLink" class="mui-card-link" target="kfItem">口服</a>
+			<a id="zsLink" class="mui-card-link" target="zsItem">注射</a>
+			<a id="whLink" class="mui-card-link" target="whItem">雾化</a>
+			<a id="psLink" class="mui-card-link" target="psItem">皮试</a>
+			<a id="jyLink" class="mui-card-link" target="jyItem">标本</a>
+			<a id="qtLink" class="mui-card-link" target="qtItem">其它</a>
+		</div>
+	</div>
+</div>
+<script src="../js/mui.min.js"></script>
+<script src="../js/zepto.min.js"></script>
+<script type="text/javascript" src="../js/scanner.js" ></script>
+<script>
+			mui.init({
+			  gestureConfig:{
+			   tap: true, //默认为true
+			   doubletap: false, //默认为false
+			   longtap: false, //默认为false
+			   swipe: true, //默认为true
+			   drag: false, //默认为true
+			   hold:false,//默认为false，不监听
+			   release:false//默认为false，不监听
+			  },
+				beforeback:function(){
+					var home = plus.webview.getWebviewById("home");
+					mui.fire(home,'scanHome');
+				}
+			});
+			mui.plusReady(function(){
+				var home = plus.webview.getWebviewById("home");
+				mui.fire(home,'closeScanHome');
+				//初始化参数
+				initParam();
+				//初始化科室所有病人
+				initPatient();
+				//绑定seach输入框keydown事件
+				bindSearch();
+				//绑定刷新事件
+				$('#btnRefreshAdvince').on('tap',function(){
+					query();
+				});
+				scanQueryAdvince();
+			});
+
+			$('.myselect').change(function(){
+				query();
+			});
+
+			function scanQueryAdvince(){
+				scanner.scan(function(data){
+			        if(data.success){
+			            var arr = data.value.split('_');
+				        if(arr[0]!='1'){
+				        	mui.toast('您扫描的不是床头卡或者腕带');
+				        	scanQueryAdvince();
+							return;
+				        }
+				        patientid = arr[1];
+				        query();
+				        scanQueryAdvince();
+			        }else{
+			            scanQueryAdvince();//失败后重新注册扫码监听
+			            mui.toast("扫码失败");
+			            return false;
+			        }
+			    }, function(){
+			        scanQueryAdvince();//失败后重新注册扫码监听
+			        mui.toast("系统异常");
+			    });
+			}
+
+			var patientid;
+
+			var param = {};
+
+			function initParam(){
+				var hasArea = localStorage.getItem("hasArea");
+				param['hasArea']  = hasArea;
+				if(hasArea==1){
+					param['areaid'] = localStorage.getItem("areaid");
+				}else{
+					param['deptid'] = localStorage.getItem("deptid");
+				}
+
+				var hasSetDept = localStorage.getItem("hasSetDept");
+
+				if(hasSetDept == 1){
+					param['hasSetDept'] = 1;
+					param['deptid'] = localStorage.getItem("deptid");
+				}else{
+					param['hasSetDept'] = 0;
+				}
+			}
+
+			var patientList;
+
+			function initPatient(){
+				var serverip = localStorage.getItem("serverip");
+
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/getPidByDeptid.do',
+			        data: param,
+			        dataType: "json",
+			        success: function(data){
+			        	patientList = data;
+			        	patientid = data[0];
+			        	query();
+			        }
+			    });
+			}
+
+			var loaded_kf = false;
+			var loaded_zs = false;
+			var loaded_wh = false;
+			var loaded_ps = false;
+			var loaded_jy = false;
+			var loaded_qt = false;
+
+			function loadAdvince(type){
+				var serverip = localStorage.getItem("serverip");
+				var exec = $('.myselect').val();
+				if(exec==1){
+					isexec = '1';
+				}else if(exec==2){
+					isexec = '0';
+				}else{
+					isexec = null;
+				}
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/getAdvinceByItem.do',
+			        data: {patientid:patientid,itemType:type,isexec:isexec},
+			        dataType: "json",
+			        success: function(data){
+			        	if(type=='kf'){
+			        		if(!loaded_kf){
+			        			loaded_kf = true;
+			        			activeAdvince(data,type);
+			        		}
+			        	}else if(type=='zs'){
+			        		if(!loaded_zs){
+			        			activeAdvince(data,type);
+			        			loaded_zs = true;
+			        		}
+			        	}else if(type=='wh'){
+			        		if(!loaded_wh){
+			        			activeAdvince(data,type);
+			        			loaded_wh = true;
+			        		}
+			        	}else if(type=='ps'){
+			        		if(!loaded_ps){
+			        			activeAdvince(data,type);
+			        			loaded_ps = true;
+			        		}
+			        	}else if(type=='jy'){
+			        		if(!loaded_jy){
+			        			activeAdvince(data,type);
+			        			loaded_jy = true;
+			        		}
+			        	}else if(type=='qt'){
+			        		if(!loaded_qt){
+			        			activeAdvince(data,type);
+			        			loaded_qt = true;
+			        		}
+			        	}
+			        }
+			    });
+			}
+
+			function query(){
+				param['patientid'] = patientid;
+				var exec = $('.myselect').val();
+				if(exec==1){
+					param['isexec'] = '1';
+				}else if(exec==2){
+					param['isexec'] = '0';
+				}else{
+					param['isexec'] = null;
+				}
+
+				var serverip = localStorage.getItem("serverip");
+				$('#patientInfo').html('<div style="margin:0 auto;" class="mui-loading"><div class="mui-spinner"></div></div>');
+				$('#syItem').html('<div class="mui-loading"><div class="mui-spinner"></div></div>');
+
+				$('#kfItem').empty();
+				$('#zsItem').empty();
+				$('#whItem').empty();
+				$('#psItem').empty();
+				$('#jyItem').empty();
+				$('#qtItem').empty();
+
+				loaded_kf = false;
+				loaded_zs = false;
+				loaded_wh = false;
+				loaded_ps = false;
+				loaded_jy = false;
+				loaded_qt = false;
+
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/getQueryPatientByid.do',
+			        data: {'patientid':patientid},
+			        dataType: "json",
+			        success: function(data){
+			        	activePatient(data);
+			        }
+			    });
+
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/advinceQuery.do',
+			        data: param,
+			        dataType: "json",
+			        success: function(data){
+			        	var advince = data.advince;
+			        	var count = data.advinceCount;
+			        	activeAdvince(advince,'sy');
+			        	activeCount(count);
+			        }
+			    });
+			}
+
+			function activePatient(patient){
+				var html = '<div class="mui-col-sm-2">';
+				if('1'==patient.sex){
+					html+='<img src="../image/hzcx/boy.png" style="width: 2rem;height: 2rem;"/>'
+				}else{
+					html+='<img src="../image/hzcx/girl.png" style="width: 2rem;height: 2rem;"/>';
+				}
+				html+=  '</div>'+
+						'<div class="mui-col-sm-10">'+
+							'<span>'+patient.name+'</span>'+
+							'<span>'+patient.zyh+'</span>'+
+							'<span>'+patient.bedno+'</span>'+
+						'</div>';
+				$('#patientInfo').html(html);
+			}
+			/**
+			 * 加载医嘱
+			 * @param {Object} advince
+			 * @param {Object} type 医嘱类型
+			 */
+			function activeAdvince(advince,type){
+				if(advince.length==0){
+					$('#'+type+'Item').html('<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">没有该项医嘱</div>');
+					return;
+				}
+
+				$('#'+type+'Link').addClass("active");
+				$('#'+type+'Link').siblings().removeClass("active");
+
+				$('#'+type+'Item').addClass("active");
+				$('#'+type+'Item').siblings().removeClass("active");
+				var html = '';
+
+				for(var i=0;i<advince.length;i++){
+					var pinci;
+					if(advince[i].pinci){
+						pinci = advince[i].pinci;
+					}else{
+						pinci = "qd";
+					}
+
+					html+='<div class="advince-header">'+
+							'<span>'+advince[i].type+'</span>'+
+							'<span>'+pinci+'</span>'+
+							'<span>开单医生：'+advince[i].doctor+'</span><br>';
+					if(type!='ps'){
+						if(advince[i].enddate){
+							html+='<span>开始时间：'+advince[i].begindate+'</span><br>'+
+								'<span>停止时间：'+advince[i].enddate+'</span>';
+						}else{
+							html+='<span>开始时间：'+advince[i].begindate+'</span>';
+						}
+					}else{
+						var psresult ;
+						if(advince[i].psresult){
+							psresult = advince[i].psresult;
+						}else{
+							psresult = '未出结果';
+						}
+						html+='<span>开始时间：'+advince[i].begindate+'</span><br>'+
+							  '<span>皮试结果：'+psresult+'</span>';
+					}
+
+					html+='</div><div class="advince-content">';
+					
+					var dose = advince[i].dose;
+					var unit = advince[i].unit;
+					var items = advince[i].itemname.split('$&');
+					var doses =typeof(dose)=="undefined"?'':dose.split('$&');
+					var units =typeof(unit)=="undefined"?'':unit.split('$&');
+					var itemname='';
+					for(var j=0;j<items.length;j++){
+						itemname += '<span>-</span>'+items[j];
+						if(typeof(doses[j])!="undefined"){
+							itemname+='['+doses[j]+units[j]+']';
+						}
+						itemname+="<br/>";
+					}
+
+					/*
+					var itemname = advince[i].itemname;
+					var arr = itemname.split('$&');
+					if(arr.length>1){
+						for(var j=0;j<arr.length-1;j++){
+							html +='<span>-</span>'+arr[j]+'<br>';
+						}
+						html +='<span>-</span>'+arr[j];
+					}else{
+						html +='<span>-</span>'+itemname;
+					}*/
+					html +=itemname;
+					html+='</div>';
+
+				}
+				$('#'+type+'Item').html(html);
+			}
+
+			function activeCount(count){
+				var syCount = count.syCount;
+				var kfCount = count.kfCount;
+				var zsCount = count.zsCount;
+				var whCount = count.whCount;
+				var psCount = count.psCount;
+				var jyCount = count.jyCount;
+				var qtCount = count.qtCount;
+
+				if(syCount>0){
+					$('#syLink').html('输液<span class="mui-badge">'+syCount+'</span>');
+				}else{
+					$('#syLink').html('输液');
+				}
+
+				if(kfCount>0){
+					$('#kfLink').html('口服<span class="mui-badge">'+kfCount+'</span>');
+				}else{
+					$('#kfLink').html('口服');
+				}
+
+				if(zsCount>0){
+					$('#zsLink').html('注射<span class="mui-badge">'+zsCount+'</span>');
+				}else{
+					$('#zsLink').html('注射');
+				}
+
+				if(whCount>0){
+					$('#whLink').html('雾化<span class="mui-badge">'+whCount+'</span>');
+				}else{
+					$('#whLink').html('雾化');
+				}
+
+				if(psCount>0){
+					$('#psLink').html('皮试<span class="mui-badge">'+psCount+'</span>');
+				}else{
+					$('#psLink').html('皮试');
+				}
+				if(jyCount>0){
+					$('#jyLink').html('标本<span class="mui-badge">'+jyCount+'</span>');
+				}else{
+					$('#jyLink').html('标本');
+				}
+				if(qtCount>0){
+					$('#qtLink').html('其它<span class="mui-badge">'+qtCount+'</span>');
+				}else{
+					$('#qtLink').html('其它');
+				}
+
+			}
+
+			//初始化卡片内容高度
+			$('.mui-card-content').height(
+				document.documentElement.clientHeight-
+				$('#header').height()-$('search').height()-
+				$('.mui-card-header').height()-$('.mui-card-footer').height()-80
+			);
+
+			$('.mui-card-link').on('tap',function(){
+				$(this).addClass("active");
+				$(this).siblings().removeClass("active");
+				var item = $(this).attr('target');
+				$('#'+item).addClass("active");
+				$('#'+item).siblings().removeClass("active");
+
+				if(item=='syItem'){
+					return;
+				}
+
+				var type;
+				if(item=='kfItem'){
+					type='kf';
+				}else if(item=='zsItem'){
+					type = 'zs';
+				}else if(item=='whItem'){
+					type = 'wh';
+				}else if(item=='psItem'){
+					type = 'ps';
+				}else if(item=='jyItem'){
+					type = 'jy';
+				}else if(item=='qtItem'){
+					type = 'qt';
+				}
+				loadAdvince(type);
+			})
+
+			function bindSearch(){
+				$('#search').on('keydown',function(event){
+					if(event.which===13){
+						var serverip = localStorage.getItem("serverip");
+						param['param'] = $(this).val();
+
+						$.ajax({
+					        type: 'POST',
+					        url: 'http://'+serverip+'/deskNurse/app/getQueryPatient.do',
+					        data: param,
+					        dataType: "json",
+					        success: function(data){
+					        	$('#seach-box-ul').empty();
+					        	for(var i=0;i<data.length;i++){
+					        		var sex;
+					        		if(data[i].sex=='1'){
+					        			sex = '男';
+					        		}else{
+					        			sex = '女';
+					        		}
+
+					        		var li = '<li class="mui-table-view-cell queryPatient">'+
+											 	'<span>'+data[i].name+'</span>'+
+											 	'<span>'+data[i].zyh+'</span>'+
+											 	'<span>'+data[i].bedno+'</span>'+
+											 	'<span>'+sex+'</span>'+
+											 	'<span style="display:none;">'+data[i].patientid+'</span>'+
+											 '</li>';
+					        		$('#seach-box-ul').append(li);
+					        	}
+
+					        	$('.queryPatient').on('tap',function(){
+					        		patientid = $(this).children().last().text();
+					        		query();
+					        		$('#search').val('');
+					        		$('.search-box').hide();
+					        	})
+
+					        }
+					    });
+
+						$('.search-box').show();
+					}
+				});
+			}
+
+			$('.mui-card').on('tap',function(){
+				$('.search-box').hide();
+				$('#search').val('');
+			});
+
+		</script>
+
+</body>
+
+</html>

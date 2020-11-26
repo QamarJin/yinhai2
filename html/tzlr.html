@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+	<head class="mui-bar mui-bar-nav">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<style type="text/css">
+			.mui-content{
+				background: #F6F6F6;
+			}
+			.mui-content-padded{
+				margin: 0;
+			}
+			.mui-input-group:after {
+			    position: absolute;
+			    right: 0;
+			    bottom: 0;
+			    left: 11px;
+			    height: 1px;
+			    content: '';
+			    -webkit-transform: scaleY(.5);
+			    transform: scaleY(.5);
+			    background-color: #c8c7cc;
+			}
+			.mui-spinner{
+				height: 1.1rem;
+				width: 1.1rem;
+				margin-top: 0.4rem;
+				color: #FFF;
+			}
+			.mui-checkbox input[type=checkbox]:checked:before, 
+			.mui-radio input[type=radio]:checked:before {
+			    color: #0FA3E5;
+			}
+
+            .mychecked:before{
+                content: '\e442' !important;
+                color: #0FA3E5 !important;
+            }
+
+            .myunchecked:before{
+                content: '\e411' !important;
+                color: #999 !important;
+            }
+            .mui-input-clear{
+				text-align: center;
+				margin: 0 !important;
+			}
+			.mui-input-row .mui-input-clear~.mui-icon-clear, .mui-input-row .mui-input-password~.mui-icon-eye, .mui-input-row .mui-input-speech~.mui-icon-speech{
+				top: 0.4rem;
+			}
+			#tzTable{
+				width: 100%;
+			}
+			#tzTable tr{
+				border: 1px solid gray;
+			}
+			table,table tr th, table tr td { 
+				border:1px solid gray; 
+				text-align: center;
+			}
+			
+			.dateclear {
+				width: 100%;
+				overflow: auto;
+				float: left;
+			}
+			
+			.timebtn {
+				width: 60%;
+				height: 2.5rem;
+				border: 0px;
+				font-size: 1.2rem;
+				line-height: 2.5rem;
+				background-color: #F6F6F6;
+				display: block;
+				float: left;
+				color: #444444;
+				margin: 5px;
+				margin-top: 15px;
+				padding: 0;
+				box-shadow: 1px 3px 5px rgba(0,0,0,.1);
+			}
+			
+			.icon-clear {
+				width: 4rem;
+				height: 2.3rem;
+				background: rgba(15, 161, 255, 1);
+				color: #FFFFFF;
+				text-align: center;
+				line-height: 2.3rem;
+				border-radius: 5px;
+				margin-top: 17px;
+				margin-left: 0.6rem;
+				float: left;
+			}
+			#begindate{
+				margin-bottom: 0.5rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="tzlrHeader" class="mui-bar mui-bar-nav header-android">
+			<span id="tzlrTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">!请扫描或选择病人</span>
+            <a class="my-icon-sicker mui-icon mui-icon-bars mui-pull-right" href="javascript:void(0)"></a>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+			<div class="mui-content-padded">
+				<div id="tzlrslider" class="mui-slider" style="background: #FFF;">
+					<div id="tzlrsliderSegmentedControl" style="height: 3em;padding-top: 0.7rem;" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted tabbar-shadow">
+						<a id="writeItem" class="mui-control-item" href="#write-item" style="font-size:1rem ;color: #444;color: #0FA3E5;font-weight: 600;">
+							录入体征
+						</a>
+						<a id="searchItem" class="mui-control-item" href="#search-item" style="font-size:1rem ;color: #444;">
+							查询体征
+						</a>
+					</div>
+					<div id="tzlrSiderGroup" class="mui-slider-group">
+						<div id="write-item" style="border:none;"  class="mui-slider-item mui-control-content mui-active">
+							<div class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="time-card" class="mui-row time-card">
+										<div id="prevTime" class="mui-col-sm-2 time-arrow">
+											<span class="mui-icon mui-icon-arrowleft" style="font-size: 1rem;"></span>
+										</div>
+										<div id="lrTime" class="mui-col-sm-8 time-content">录入时间：14点</div>
+										<div id="nextTime" class="mui-col-sm-2 time-arrow">
+											<span class="mui-icon mui-icon-arrowright" style="font-size: 1rem;"></span>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											<select id="temp_type" class="mui-btn mui-btn-block" style="font-size: 0.9rem;">
+												<option value="yw">腋&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;温</option>
+												<option value="kw">口&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;腔</option>
+												<option value="gw">肛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;温</option>
+											</select>
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="twValue" type="number" class="mui-input-clear" placeholder="体温">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											降温体温
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="jwtwValue" type="number" class="mui-input-clear" placeholder="降温体温">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											脉&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;搏
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="mbValue" type="number" class="mui-input-clear" placeholder="脉搏">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											心&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;率
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="xlValue" type="number" class="mui-input-clear" placeholder="心率">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											呼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;吸
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="hxValue" type="number" class="mui-input-clear" placeholder="呼吸">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-xs-3 select-label">
+											血&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;压
+										</div>
+										<div class="mui-col-xs-9">
+											<div class="mui-row">
+												<div class="mui-col-xs-6">
+													<div class="mui-input-row" style="padding-right: 0.5rem;">
+														<input id="ssy" type="number" class="mui-input-clear" placeholder="收缩压">
+													</div>
+												</div>
+												<div class="mui-col-xs-6" style="padding: 0 .5rem;">
+													<div class="mui-input-row">
+														<input id="szy" type="number" class="mui-input-clear" placeholder="舒张压">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-x-2 select-label">
+											体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="tizhong" type="number" class="mui-input-clear" placeholder="体重">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-x-2 select-label">
+											血&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;糖
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="xuetang" type="number" class="mui-input-clear" placeholder="血糖">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-x-2 select-label">
+											氧饱和度
+										</div>
+										<div class="mui-col-xs-9">
+											<div class="mui-row">
+												<div class="mui-col-xs-6">
+													<div class="mui-input-row" style="padding-right: 0.5rem;">
+														<input id="ybhd" type="number" class="mui-input-clear" placeholder="氧饱和度">
+													</div>
+												</div>
+												<div class="mui-col-xs-6" style="padding: 0 .5rem;">
+													<div class="mui-input-row">
+														<input id="zmy" type="text" value="指脉氧%">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-x-2 select-label">
+											大便次数
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="dbcs" type="number" class="mui-input-clear" placeholder="大便次数">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-x-2 select-label">
+											小&nbsp;&nbsp;便&nbsp;&nbsp;量
+										</div>
+										<div class="mui-col-sm-10" style="width: 73%;">
+											<div class="mui-input-row">
+												<input id="xbl" type="number" class="mui-input-clear" placeholder="小便量">
+											</div>
+										</div>
+									</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+												未测原因
+											</div>
+											<div class="mui-col-sm-10 select-content mui-row">
+												<div class="mui-col-sm-10" style="width: 90%;">
+													<div id='wcyyPicker' class="selet-input"></div>
+												</div>
+												<div id="wcyyClear" class="mui-col-sm-2" style="width: 10%;line-height: 2.4rem;">
+													<span class="mui-icon mui-icon-closeempty"></span>
+												</div>
+											</div>
+										</div>
+									<div class="select-body mui-row">
+										<div class="mui-col-sm-2 select-label">
+											摘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;要
+										</div>
+										<div class="mui-col-sm-10 select-content mui-row">
+											<div class="mui-col-sm-10" style="width: 90%;">
+												<div id='zyPicker' class="selet-input"></div>
+											</div>
+											<div id="zyClear" class="mui-col-sm-2" style="width: 10%;line-height: 2.4rem;">
+												<span class="mui-icon mui-icon-closeempty"></span>
+											</div>
+										</div>
+									</div>
+									<button id="btnSaveTz" class="btn-save" style="margin-top: 0.5rem;">保&nbsp;&nbsp;&nbsp;&nbsp;存</button>
+								</div>
+							</div>
+						</div>
+						<div id="search-item" style="border:none;"  class="mui-slider-item mui-control-content">
+							<div  class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div class="mui-scroll" style="padding-bottom: 1rem;">
+									<div class="dateclear">
+						                <button id='begindate' date-potion="" class="timebtn">点我选择日期</button>
+						                <div class="icon-clear">
+						                    	重置
+						                </div>
+						            </div>
+									<table cellpadding="0" cellspacing="0" width="100%" id="tzTable">
+										
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/mui.poppicker.js"></script>
+	<script type="text/javascript" src="../js/scanner.js" ></script>
+	<script src="../js/shouye.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/data.select.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/URL.js" ></script>
+	<script src="../js/tzlr.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/base.js" ></script>
+	<script>
+		window.addEventListener('selectPatient',function(e){
+			var patientid = e.detail.id;
+			selectPatient(patientid);
+		});
+		window.addEventListener('scanTzlr',function(e){
+			scanTzlr();
+		});
+		window.addEventListener('closeScanTzlr',function(e){
+			scanner.close();
+		});
+		mui.init();
+		var yzPatientid='';
+		var tzlrFlag = 0;
+		var tabFlag=1;
+		mui.plusReady(function(){
+		    //打开选择病人窗口
+		    $('.my-icon-sicker').bind('tap',function(){
+		    	openPatient();
+		    });
+		    //初始化体征录入
+		    initTzlr();
+		    //绑定体征录入事件
+		    bindTzlrEvent();
+		    //初始化体征录入选择框
+		    initPicker();
+		    //退出登录
+		    signOut();
+		    //searchTz();
+		    tzlrSlide();
+		    var tabGroupHeight = document.documentElement.clientHeight-44-50;
+		    $('#tzlrSiderGroup').height(tabGroupHeight);
+		});
+		
+		//点击日期选择填出选择器
+		var dtpicker = new mui.DtPicker({
+		    type: "date"//设置日历初始视图模式
+		})
+		$(".timebtn").bind('tap',function(){
+			var id=$(this).attr("id");
+			dtpicker.show(function(selectItems) {//选择时间后的事件处理
+				var	time=selectItems.y.value+"-"+selectItems.m.value+"-"+selectItems.d.value
+				$("#"+id).html(time);
+				$("#"+id).attr("date-potion",time);
+				date_time = time;
+				searchTz(date_time);
+				$(".icon-clear").css("display","block");
+			})
+		});
+		
+		//当前日期年月日
+		var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth()+1;
+        var day = now.getDate();
+        if(month<10){
+            month = "0"+month;
+        }else{
+            month = ""+month;
+        }
+        if(day<10){
+            day = "0"+day;
+        }else{
+            day = ""+day;
+        }
+		var now_date = year+"-"+month+"-"+day;
+		$("#begindate").html(now_date);
+		$(".icon-clear").bind('tap',function(){
+			$("#begindate").html(now_date);
+			$("#begindate").attr("date-potion","");
+			searchTz(now_date);
+		});
+		
+		
+		/**
+		 * 打开病人列表
+		 */
+		function openPatient(){
+			mui.openWindow({
+				id: 'patient',
+			    url: 'patientList.html',
+			    extras: {detail:0,tabFlag:1},
+			    reload:true
+			});
+		}
+		
+		//体征录入左右tab滑动事件
+		function tzlrSlide(){
+			document.getElementById('tzlrslider').addEventListener('slide', function(e) {
+				var tabid;
+				if (e.detail.slideNumber === 0) {
+					tabid = 'writeItem';
+				}else if(e.detail.slideNumber===1){
+					tabid = 'searchItem';
+					searchTz(now_date);
+				} 
+				$('#'+tabid).css({'color':'#0FA3E5','font-weight':'600'});
+				var tzlrOtherTabs = $('#'+tabid).siblings();
+				$.each(tzlrOtherTabs, function(index,item) {
+					$(item).css({'color':'#444','font-weight':'400'});
+				});
+				
+			});		
+		}
+		
+		function searchTz(date_time){
+			$("#tzTable").html('');
+			mui.ajax('http://'+serverip+'/deskNurse/app/getSignAndHuliByDate.do',{
+				data:{patientid:yzPatientid,date:date_time},
+				type:"post",
+				dataType:"json",
+				success:function(data){
+					var times = data.signs.times;
+					var signlist = data.signs.signlist;
+					var huli = data.signs.huli;
+					var tztable = $("#tzTable");
+					var timeHtml ='<tr><th style="width:2.5rem;"></th>'
+					var itemHtml ='';
+					for(var i=0;i<times.length;i++){
+						timeHtml+='<th>'+times[i]+'</th>'
+					}
+					timeHtml+='</tr>';
+					tztable.append(timeHtml);
+					for(var i=0;i<signlist.length;i++){
+						itemHtml+='<tr>'+
+							'<td>'+signlist[i].type+'</td>'+
+							'<td>'+signlist[i].t1+'</td>'+
+							'<td>'+signlist[i].t2+'</td>'+
+							'<td>'+signlist[i].t3+'</td>'+
+							'<td>'+signlist[i].t4+'</td>'+
+							'<td>'+signlist[i].t5+'</td>'+
+							'<td>'+signlist[i].t6+'</td>'+
+							'</tr>'
+					}
+					if(huli){
+						itemHtml+='<tr><td >术后天数</td><td colspan="6">'+huli.shuhou_days+'</td></tr>'+
+								  '<tr><td >血压</td><td colspan="6">'+huli.bloodpressure+'</td></tr>'+
+								  '<tr><td >体重</td><td colspan="6">'+huli.weight+'</td></tr>'+
+								  '<tr><td >血糖</td><td colspan="6">'+huli.xuetang+'</td></tr>'+
+								  '<tr><td >氧饱和度</td><td colspan="6">'+huli.c_tszl1+huli.c_zlxm_name_2+'</td></tr>'+
+								  '<tr><td >大便次数</td><td colspan="6">'+huli.shit_times+'</td></tr>'+
+								  '<tr><td >小便量</td><td colspan="6">'+huli.urine_amount+'</td></tr>'
+					}else{
+						itemHtml+='<tr><td >术后天数</td><td colspan="6"></td></tr>'+
+								  '<tr><td >血压</td><td colspan="6"></td></tr>'+
+								  '<tr><td >体重</td><td colspan="6"></td></tr>'+
+								  '<tr><td >血糖</td><td colspan="6"></td></tr>'+
+								  '<tr><td >氧饱和度</td><td colspan="6"></td></tr>'+
+								  '<tr><td >大便次数</td><td colspan="6"></td></tr>'+
+								  '<tr><td >小便量</td><td colspan="6"></td></tr>'
+					}
+					tztable.append(itemHtml);
+				}
+			})
+		}
+	</script>
+</html>

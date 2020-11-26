@@ -1,0 +1,362 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.dbul{
+				padding: 0;
+				margin: 0;
+			}
+			.dbul>li{
+				list-style: none;
+			}
+			
+			.dbul>li{
+				border-bottom: 0.5rem #F6F6F6 solid;
+				padding: 0.5rem;
+			}
+			
+			.dbul>li>span{
+				color: #444444;
+			}
+			.sexImg{
+				margin-top: 0.7rem;
+				width: 2.5rem;
+				height: 2.5rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			
+			.sexImg.boy{
+				background-image:url('../image/hzcx/boy.png') ;
+			}
+			
+			.sexImg.girl{
+				background-image:url('../image/hzcx/girl.png') ;
+			}
+			
+			.hljbImg{
+				position: relative;
+				width: 0.8rem;
+				height: 0.6rem;
+				left: 1.7rem;
+				bottom: 0.6rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			.hljbImg.one{
+				background-image:url('../image/hzcx/1.png') ;
+			}
+			.hljbImg.two{
+				background-image:url('../image/hzcx/2.png') ;
+			}
+			.hljbImg.three{
+				background-image:url('../image/hzcx/3.png') ;
+			}
+			.hljbImg.teji{
+				background-image:url('../image/hzcx/teji.png') ;
+			}
+			.hljbImg.icu{
+				background-image:url('../image/hzcx/ICU.png') ;
+			}
+			.my-card-content{
+				border-top: 1px #ECECEC solid;
+			}
+			.pint_times_num{
+				color: #FFF;
+				background: #0FA3E5;
+				margin: 0 0.4rem 0 0.4rem;
+				width: 14px;
+				height: 14px;
+				border-radius: 100px;
+				padding-left: 6px;
+				padding-right: 6px;
+			}
+		</style>
+	</head>
+
+	<body style="background: #fff;" onscroll="onBodyScroll()">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span id="winTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">!扫描病人腕带开始核对</span>
+		</header>
+		<div id="pullupRefresh" class="mui-content" style="background: #FFF;">
+			<div id="loading" style="width: 100%;text-align: center;margin-top: 0.5rem;">
+				<span class="mui-spinner"></span>
+			</div>
+			<ul id="daibanul" class="dbul">
+				
+			</ul>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/scanner.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init({
+			pullRefresh: {
+				container: '#pullupRefresh',
+				up: {
+					height: 50,
+					contentnomore: '没有更多数据了',
+					contentrefresh: '正在加载...',
+					callback: pullupRefresh
+				}
+			},
+			beforeback:function(){
+				var vw = plus.webview.getWebviewById("home");
+				mui.fire(vw,"scanHome");
+			}
+		});
+		var curPage = 0;
+		window.addEventListener('loadData', function(e) {
+			curPage = 0;
+			$("#daibanul").html("");
+			pullupRefresh();
+			mui('#pullupRefresh').pullRefresh().refresh(true);
+			mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+		});
+		window.addEventListener('scanBb', function(e) {
+			scanBb();
+		});
+		
+		mui.plusReady(function(){
+			var vw = plus.webview.getWebviewById("home");
+			mui.fire(vw,"closeScanHome");
+			scanBb();
+			pullupRefresh();
+		});
+		
+		function scanBb(){
+			scanner.scan(function(data){
+		        var serverip = localStorage.getItem("serverip");
+				scanner.getBarCodeInfo(data);
+	            if (arr[0] == '1') {
+	            	mui.openWindow({
+					    url:'bbhd.html',
+					    id:'bbhd',
+					    extras:{
+					    	patientid:arr[1]
+					    }
+					});
+	            } else {
+	            	mui.toast('您扫描的不是床头卡或者腕带');
+	            	setTimeout(function(){
+	                    plus.device.beep("2");
+	                },500);
+	                scanBb();
+	            }
+		    }, function(){
+		        scanBb();//失败后重新注册扫码监听
+		        mui.toast("系统异常");
+		    });
+		}
+		
+		var keyflag=0;
+		$("#search").on('keydown',function(event){
+			if(event.which===13){
+				keyflag=1;
+			}
+		});
+		$("#search_").on('keydown',function(event){
+			if(event.which===13){
+				keyflag=2;
+			}
+		});
+		$('#search,#search_').on('keydown',function(event){
+			if(event.which===13){
+				curPage=0;
+				$("#daibanul").html("");
+				pullupRefresh();
+				mui('#pullupRefresh').pullRefresh().refresh(true);
+				mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+				$(this).blur();
+			}
+		});
+		
+		function pullupRefresh() {
+			var param = plus.webview.currentWebview();
+			var hasArea = localStorage.getItem("hasArea");
+			param['hasArea']  = hasArea;
+			if(hasArea==1){
+				param['areaid'] = localStorage.getItem("areaid");
+			}else{
+				param['deptid'] = localStorage.getItem("deptid");
+			}
+			var hasSetDept = localStorage.getItem("hasSetDept");
+			if(hasSetDept == 1){
+				param['hasSetDept'] = 1;
+				param['deptid'] = localStorage.getItem("deptid");
+			}else{
+				param['hasSetDept'] = 0;
+			}
+			param['param'] = '';
+			if(keyflag==1){
+				param['param']=$("#search").val()!=''?$("#search").val():'';
+			}
+			if(keyflag==2){
+				param['param']=$("#search_").val()!=''?$("#search_").val():'';
+			}
+           	param['curPage']=curPage;
+           	var serverip = localStorage.getItem("serverip");
+           	mui.ajax('http://'+serverip+'/deskNurse/app/getJyPatients.do',{
+           		 type: 'POST',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	$('#loading').hide();
+		        	var list = data;
+		        	curPage++;
+		        	if(list.length>0){
+		        		for(var i=0;i<list.length;i++){
+		        			var li = '<li class="mui-table-view-cell">'+
+							'<div class="mui-row" style="width: 100%;">'+
+								'<div class="mui-col-sm-2" style="width: 15%;">'+
+									'<div class="sexImg ';
+						if(list[i].sex==1){
+							li+='boy';
+						}else{
+							li+='girl';
+						}
+						li += '"></div>'+
+									'<div class="hljbImg ';
+						if(list[i].nl=='1'){
+							li+='one';
+						}else if(list[i].nl=='2'){
+							li+='two';
+						}else if(list[i].nl=='3'){
+							li+="three";
+						}else if(list[i].nl=='4'){
+							li+='teji';
+						}else if(list[i].nl=='icu'){
+							li+='icu';
+						}else{
+							li+='one';
+						}
+						li += '"></div>'+
+								'</div>'+
+								'<div class="mui-col-sm-10" style="85%">'+
+									'<div style="height: 2rem;">';
+						li+='<span style="color: #444;font-weight: 600;">'+list[i].name+'</span>';
+
+						var tmp_bedno;
+						if(list[i].bedno){
+							tmp_bedno = list[i].bedno;
+						}else{
+							tmp_bedno = '未分床';
+						}
+
+						li +='<span style="margin-left:5rem;">住院号:'+list[i].zyh+'</span>'+
+									'</div>'+
+									'<div style="height: 2rem;">'+
+										'<span>'+list[i].age+list[i].ageunit+'</span>'+
+										'<span style="margin-left:3.5rem;">床号:<span style="color: #0FA3E5;">'+tmp_bedno+'</span></span>';
+						li+='</div></div></div></li>';
+							$('#daibanul').append(li);
+		        		}
+		        		mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+		        	}else{
+		        		mui('#pullupRefresh').pullRefresh().endPullupToRefresh(true);
+		        	}
+		        }
+		    });
+           /*	mui.ajax('http://'+serverip+'/deskNurse/app/getAdvinceByDeptid.do',{
+           		 type: 'POST',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	$('#loading').hide();
+		        	curPage++;
+		        	var advince = data;
+		        	if(advince.length>0){
+		        		for(var i=0;i<advince.length;i++){
+							var item = '<li>'+
+								'<div class="mui-row" style="height: 4rem;">'+
+									'<div class="mui-col-sm-2" style="width: 17%;">';
+								var sexClass;
+								var nlClass;
+								if(advince[i].sex=='1'){
+									sexClass = 'boy';
+								}else{
+									sexClass = 'girl';
+								}
+								
+								if(advince[i].nl=='1'){
+									nlClass = 'one';
+								}else if(advince[i].nl=='2'){
+									nlClass = 'two';
+								}else if(advince[i].nl=='3'){
+									nlClass = 'three';
+								}else if(advince[i].nl=='4'){
+									nlClass = 'teji';
+								}
+								item+=	'<div class="sexImg '+sexClass+'"></div>'+
+										'<div class="hljbImg '+nlClass+'"></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-4" style="width:33% ;">'+
+											'<div style="height: 2rem;"><span style="font-weight: 600;line-height: 2rem;">'+advince[i].pname+'</span></div>'+
+											'<div style="height: 2rem;"><span style="line-height: 2rem;">床号:</span><span style="color: #0FA3E5;line-height: 2rem;">'+advince[i].bedno+'</span></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-6" style="width: 49%;">'+
+										'<div><span style="float: right;line-height: 2rem;">住院号:'+advince[i].zyh+'</span></div>';
+								
+								item+=	'<div><span style="float: right;line-height: 2rem;">频次:';
+								if(!advince[i].pinci){
+									item+='qd';
+								}else{
+									item+=advince[i].pinci;
+								}
+								if(advince[i].pinci&&advince[i].pinci!='qd'&&
+									advince[i].itemtype!='kf'&&advince[i].itemtype!='ps'){
+									var prtt = parseInt(advince[i].print_times)+1
+									item+='<span class="pint_times_num">'+prtt+'</span>'
+								}
+								item+='</span></div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="my-card-content" >'+
+			                        '<ul class="myul-noborder">'+
+			                        '<li>'+advince[i].doctor_note+'</li>';
+			                    var arr = advince[i].itemname.split('$&');
+			                    if(arr){
+			                    	for(var j=0;j<arr.length;j++){
+			                    		item+='<li>'+
+			                        			'<span class="yzglContent"><div class="transverse tr-blue"></div>'+arr[j]+'</span>'+
+			                        		  '</li>';
+			                    	}
+			                    }else{
+			                    	item+='<li>'+
+			                        		'<span class="yzglContent"><div class="transverse tr-blue"></div>'+advince[i].itemname+'</span>'+
+			                        	  '</li>';
+			                    }
+			                    item+= '</ul></div></li>';
+							$('#daibanul').append(item);
+						}
+						mui('#pullupRefresh').pullRefresh().endPullupToRefresh(false);
+		        	}else{
+		        		mui('#pullupRefresh').pullRefresh().endPullupToRefresh(true);
+		        	}
+		       }
+           	});*/
+		}
+		
+        function onBodyScroll(){
+        	var height = $('body').scrollTop();
+        	if(height>40){
+        		$("#header").hide();
+        		$("#searchbox").hide();
+        		$("#searchHeader").show();
+        	}else{
+        		$("#header").show();
+        		$("#searchbox").show();
+        		$("#searchHeader").hide();
+        	}
+        }
+        
+	</script>
+</html>

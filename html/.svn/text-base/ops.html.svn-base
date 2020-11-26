@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style>
+			h5{
+				color: #444444;
+				font-size: 1rem;
+			}
+		</style>
+	</head>
+
+	<body style="background: #FFF;">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">手术申请</span>
+		</header>
+		
+		<div class="mui-content" style="background: #FFF;">
+		    <ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+		    </ul>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(function(){
+			var serverip = localStorage.getItem("serverip");
+			
+			var param = {};
+			
+			var hasArea = localStorage.getItem("hasArea");
+			param['hasArea']  = hasArea;
+			if(hasArea==1){
+				param['areaid'] = localStorage.getItem("areaid");
+			}else{
+				param['deptid'] = localStorage.getItem("deptid");
+			}
+			
+			var hasSetDept = localStorage.getItem("hasSetDept");
+			
+			if(hasSetDept == 1){
+				param['hasSetDept'] = 1;
+				param['deptid'] = localStorage.getItem("deptid");
+			}else{
+				param['hasSetDept'] = 0;
+			}
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getOps.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	$('ul').html('');
+					for(var i=0;i<data.length;i++){
+						var place = typeof(data[i].place)=="undefined"?"暂未安排":data[i].place;
+						var html = '<li class="mui-table-view-cell">'+
+				            '<div class="mui-table">'+
+				                '<div class="mui-table-cell mui-col-xs-10">'+
+				                    '<h4>'+data[i].p_name+
+				                    '　'+data[i].bedno+'　手术医生:'+data[i].doctor+'</h4>'+
+				                    '<h5>时间:'+data[i].date+'</h5>'+
+				                    '<h5>地点:'+place+'</h5>'+
+				                    '<h5>麻醉方式:'+data[i].mz+'</h5>'+
+				                    '<h5>手术名称:'+data[i].name+'</h5>'+
+				                    '<h5>术前诊断:'+data[i].zd+'</h5>'+
+				                '</div>'+
+				            '</div>'+
+				        '</li>';
+				        $('ul').append(html);
+					}
+		        }
+		    });
+			
+		});
+		
+	</script>
+
+</html>

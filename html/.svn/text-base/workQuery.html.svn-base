@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>当日完成工作查询</title>
+		<link rel="stylesheet" href="../css/mui.min.css">
+		
+		<style>
+			body{
+				padding: 0;
+				margin: 0;
+				background: #FFF;
+			}
+			.row{
+				height: 2.6rem;
+			}
+			.row:nth-child(odd){
+				background-color: #FFF;
+			}
+			.row:nth-child(even){
+				background-color:#F6F6F6 ;
+			}
+			.type{
+				float: left;
+				width: 50%;
+				line-height: 2.6rem;
+				text-align: left;
+				padding-left: 4rem;
+			}
+			.num{
+				float: left;
+				line-height: 2.6rem;
+				width: 50%;
+				text-align: center;
+			}
+			.my-header{
+				background: #FFF;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav my-header">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #0FA3E5;"></a>
+			<span id="winTitle" class="mui-title" style="color: #0FA3E5;font-size: 1.1rem;">当日完成工作</span>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/zepto.min.js" ></script>
+	<script type="text/javascript" src="../js/mui.min.js" ></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(function(){
+			load();
+		});
+		
+		function load(){
+			var param={};
+			var serverip = localStorage.getItem("serverip");
+			var empid = localStorage.getItem("loginid");
+			var hasArea = localStorage.getItem("hasArea");
+			param.hasArea  = hasArea;
+			if(hasArea==1){
+				param.areaid = localStorage.getItem("areaid");
+			}else{
+				param.dept = localStorage.getItem("deptid");
+			}
+			param.empid=empid;
+			$('.mui-content').html('<div class="mui-loading"><div class="mui-spinner"></div></div>');
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/desk/getEmpWorkNum.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	var html = '<div class="row" style="background: #0FA3E5;margin-top: 0.5rem;">'+
+									'<div class="type" style="color: #FFF;">工作类型</div>'+
+									'<div class="num" style="color: #FFF;">数量</div>'+
+								'</div>';
+		        	for(var i=0;i<data.length;i++){
+		        		var num = parseInt(data[i].num);
+		        		if(num>0){
+		        			html+='<div class="row"><div class="type">'+data[i].type+'</div><div id="fc" class="num">'+num+'</div></div>';
+		        		}
+		        	}
+		        	$('.mui-content').html(html);
+		        }
+		    });
+		}
+	</script>
+</html>

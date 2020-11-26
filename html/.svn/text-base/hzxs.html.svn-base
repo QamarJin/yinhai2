@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+	<head class="mui-bar mui-bar-nav">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" href="../css/note.css" />
+		<style type="text/css">
+			@font-face {
+				font-family: Muiicons;
+				font-weight: normal;
+				font-style: normal;
+				src: url('../fonts/ico_wenti.ttf') format('truetype');
+			}
+			#divWrite{
+				margin: 10px 5px 0px 5px;
+				padding: 0;
+			}
+			
+			.mui-icon {
+				font-size: 28px;
+			}
+			.audio {
+				height: 3rem;
+				background: #FFFFFF;
+				width: 96%;
+				margin: 10px 2%;
+				border-radius: 5px;
+				line-height: 3rem;
+				color: #0d0d0d;
+				box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
+			}
+			
+			.audio>div:first-child {
+				float: left;
+				width: 10%;
+			}
+			
+			.audio>div:nth-child(2) {
+				float: left;
+				text-align: center;
+				width: 79%;
+			}
+			
+			.audio>div:last-child {
+				float: right;
+				width: 11%;
+				text-align: right;
+			}
+			
+			.audio.active {
+				background: #EEEEEE;
+			}
+			
+			.audio-flag {
+				line-height: 3rem;
+				font-size: 26px;
+				margin-left: 5px;
+				color: #949494;
+			}
+			
+			.audio-flag.play {
+				color: #2AC845!important;
+			}
+			
+			.audio-flag:before {
+				content: '\e908';
+			}
+			
+			.audio-remove {
+				line-height: 3rem;
+				font-size: 26px;
+				margin-right: 5px;
+			}
+			
+			.audio-remove:before {
+				content: '\e900';
+				color: #e53512;
+			}
+			
+			.audio-change {
+				float: right;
+				color: #FFFFFF;
+				padding-top: 0!important;
+				line-height: 40px;
+			}
+			
+			.audio-change:before {
+				content: '\e909';
+				font-size: 21px;
+				margin-right: 10px;
+			}
+			#eventDiv{
+				position: fixed;
+				z-index: 1;
+				height: 5rem;
+				overflow: auto;
+				background-color: #FAFAFA;
+			}
+			#hzxsBtnGroup{
+				padding-top: 5rem;
+			}
+			#recordTime{
+				width: 100%;
+				height: 100%;
+			}
+			.wave{
+				width: 100%;
+				height: 4rem;
+				background-image:url(../image/wd/icon_backgra.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+				line-height: 4rem;
+				text-align: center;
+				color: #FFFFFF;
+				font-size: 2rem;
+			}
+			.stop-box{
+				text-align: center;
+				padding-top: 1rem;
+			}
+			
+			.stop-box>a>img{
+				width: 5rem;
+				height: 5rem;
+			}
+			.recordDiv{
+				margin-top: 40%;
+				margin-left: 5%;
+				width: 90%;
+				height: 40%;
+				background-color: #FFFFFF;
+			}
+		</style>
+	</head>
+	<body>
+			<header id="hzxsHeader" class="mui-bar mui-bar-nav header-android">
+				<span id="hzxsTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">!请扫描或选择病人</span>
+                <a class="my-icon-sicker mui-icon mui-icon-bars mui-pull-right" href="javascript:void(0)" ></a>
+				<a class="my-icon-edit mui-icon mui-icon-bars mui-pull-right" href="javascript:void(0)" style="left: -1rem;"></a>
+			</header>
+			<div id="hzxscontent" class="mui-content"  style="background: #F6F6F6;padding-left: 0;">
+				<div id="eventDiv"  style="width: 100%;margin-left:0 ;padding: 0;">
+					<div style="height: 4rem;width: 100%;line-height: 4rem;padding-left: 0.5rem;font-size: 1rem;font-weight:600 ;">
+						选择类别
+						<button id="btnSaveHzxs" style="float: right;margin-right: 0.5rem;height: 2.6rem;margin-top: 0.8rem;
+							width: 6rem;border: none;box-shadow: 0.1rem 0.2rem 0.3rem #DDDDDD;" class="btn-save" style="margin-top:1rem;">保&nbsp;&nbsp;&nbsp;&nbsp;存</button>
+						<button id="btnNextBed" style="float: right;margin-right: 2rem;height: 2.6rem;margin-top: 0.8rem;
+							width: 6rem;border: none;box-shadow: 0.1rem 0.2rem 0.3rem #DDDDDD;">下一床</button>
+					</div>
+				</div>
+				<div id="hzxsBtnGroup" class="mui-row">
+				</div>
+				<div id="divWrite" class="mui-input-row">
+					<textarea id="note" rows="3" placeholder="备注"></textarea>
+				</div>
+				<div id="picBox" style="overflow: auto;">
+					
+				</div>
+				<div id="recordBox" style="overflow: auto;">
+					
+				</div>
+			</div>
+			<div id="recordTime" class="mui-backdrop mui-off-canvas-backdrop" style="text-align: center;display: none;">
+				<div class="recordDiv">
+					<div class="wave">
+						<span id="timeCount" style="margin-right: 5px;color: #444444;display: none;">00:00:00</span>
+					</div>
+					<div class="stop-box">
+						<a href="javascript:void(0);" class="stoprecord" id="btnStop">
+							<img src="../image/wd/icon_finish.png"/>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div id="divType" class="mui-popover mui-popover-action mui-popover-bottom">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<a id="btnCamera" href="javascript:void(0)">拍照</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a id="btnAlbum" href="javascript:void(0)">选取现有照片</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a id="btnVoice" class="mui-icon mui-icon-mic" style="font-size: initial;" href="javascript:void(0)">录音</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<a id="btnCancel" href="#divType"><b>取消</b></a>
+					</li>
+				</ul>
+			</div>
+	</body>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.zoom.js"></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/scanner.js" ></script>
+	<script type="text/javascript" src="../js/base.js" ></script>
+	<script src="../js/hzxs.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script>
+		window.addEventListener('selectPatient',function(e){
+			var patientid = e.detail.id;
+			selectPatient(patientid);
+		});
+
+		window.addEventListener('scanHzxs',function(e){
+			scanHzxs();
+		});
+		
+		window.addEventListener('closeScanHzxs',function(e){
+			scanner.close();
+		});
+		mui.init({
+			swipeBack:false //关闭右滑关闭功能
+		});
+		var yzPatientid='';
+		var hzxsFlag = 0;
+		var tabFlag=3;
+		mui.plusReady(function(){
+		    //打开选择病人窗口
+		    $('.my-icon-sicker').bind('tap',function(){
+		    	openPatient();
+		    });
+			initHzxs();
+			initHzxsData();
+		    //退出登录
+		    signOut();
+		    rec = plus.audio.getRecorder();
+		    // 获取音频目录对象
+			plus.io.resolveLocalFileSystemURL('_doc/', function(entry) {
+				entry.getDirectory('audio', {
+					create: true
+				}, function(dir) {
+					gentry = dir;
+				}, function(e) {
+					mui.toast('Get directory "audio" failed: ' + e.message);
+				});
+			}, function(e) {
+				mui.toast('Resolve "_doc/" failed: ' + e.message);
+			});
+			//获取图片目录
+			plus.io.resolveLocalFileSystemURL('_doc/', function(entry) {
+				entry.getDirectory('camera', {
+					create: true
+				}, function(dir) {
+					gentry = dir;
+				}, function(e) {
+				});
+			}, function(e) {
+			});
+			//获取视频目录
+			plus.io.resolveLocalFileSystemURL('_doc/', function(entry) {
+				entry.getDirectory('video', {
+					create: true
+				}, function(dir) {
+					gentry = dir;
+				}, function(e) {
+					mui.toast('Get directory "video" failed: ' + e.message);
+				});
+			}, function(e) {
+				mui.toast('Resolve "_doc/" failed: ' + e.message);
+			});
+		});
+		
+		/**
+		 * 打开病人列表
+		 */
+		function openPatient(){
+			mui.openWindow({
+				id: 'patient',
+			    url: 'patientList.html',
+			    extras: {detail:0,tabFlag:3},
+			    reload:true
+			});
+		}
+		
+		var base64Arr = [];
+		var photos=[];
+		var photoUrls = [];
+		var count = 0;
+		
+		//拍照
+		function UCam() {
+			plus.camera.getCamera().captureImage(function(p) {
+				showPic(p,"camera")
+			}, function(e) {
+				console.info("失败：" + e.message);
+			}, {
+				filename: "_doc/camera/",
+				index: 1
+			});
+		}
+		//从相册选择图片
+		function galleryPic(type) {
+			plus.gallery.pick(function(e) {
+				var fiLength = e.files.length;
+				for(var i = 0; i < fiLength; i++) {
+					showPic(e.files[i],"gallery");
+				}
+			}, function(e) {
+				console.info("取消选择");
+			}, {
+				filter: type,
+				multiple: true
+			})
+		}
+		var photoCount=0;
+		//压缩展示图片
+		function showPic(imgurl,type) {
+			var pt = imgurl;
+			var dstP;
+			if("gallery"==type){
+				dstP= parent.plus.io.convertLocalFileSystemURL('_doc/camera/'+new Date().getTime()+".jpg");
+			}else{
+				dstP = pt;
+			}
+			plus.zip.compressImage({
+				src: pt,
+				dst: dstP,
+				quality: 80,
+				overwrite: true,
+				format: "png",
+				width: "800px",
+				height: "1280px"
+			}, function(e) {
+				var path = plus.io.convertLocalFileSystemURL(e.target);
+				var photo = {
+					name: pt,
+					path: path
+				}
+				photoUrls.push(path);
+				photos.push(photo);
+				$('#picBox').append('<div style="float:left" id="p_'+photoCount+'"><span class="mui-icon mui-icon-closeempty"></span>'+
+									'<img class="imgClass"  style="width: 85px;height: 85px;" src="'+path+'"/></div>');
+				$('#p_'+photoCount).find('span').on('tap',function(){
+					$(this).parent().remove();
+					photoUrls.remove(path);
+					photos.remove(photo);
+				});
+				photoCount++;
+			}, function() {});
+		}
+		
+		// 监听图片的点击
+	    mui('body').on('tap', '.imgClass', function() {
+	    	var path = $(this).attr("src");
+		    var index = photoUrls.indexOf(path);
+		    plus.nativeUI.previewImage(photoUrls, {
+		      current: index,
+		      loop: true,
+		      indicator: 'number'
+		    });
+	    });
+		
+		/* 当前点击照片或录音所属问题节点Div的ID */
+		$('#btnVoice').on('tap', function() {
+			$("#recordTime").css("display","block");
+			var recordPermission = plus.navigator.checkPermission('RECORD');
+			if("denied" == recordPermission) {
+				mui.toast("录音权限已被拒绝,请打开该权限!");
+				return;
+			}
+			/*plus.webview.open('audioRecord.html','audioRecord',
+				{
+					background:'rgba(0,0,0,0.6)',
+					bottom:'35%',
+					top:'35%',
+					left:'20px',
+					right:'20px'
+				},
+				'none',200,startRecord);*/
+			startRecord();
+		});
+		
+		$(".stoprecord").bind('tap',function(){
+			$("#recordTime").css("display","none");
+			stopRecord();
+		});
+
+		var timeCount = 0;
+		var startInterval;
+		var rec; 
+		var adTimes = []; //所有问题节点的音频时间
+		var audios = []; //所有问题节点的音频
+		var isRecord = false;
+		var voiceLengthNum;
+		var voiceLengthStr;
+		function startRecord() {
+			if(isRecord){
+				return mui.toast("有未结束的录音，请先停止");
+			}
+			isRecord = true;
+			$("#timeCount").show();
+			startInterval = window.setInterval(function() {
+				timeCount++;
+				var html;
+				if(timeCount < 10) { //10s内
+					html = "00:00:0" + timeCount;
+				} else if(timeCount >= 10 && timeCount <= 59) { //10s~59s
+					html = "00:00:" + timeCount;
+				} else if(timeCount > 59 && timeCount <= 3599) { //59s~3599s [59m59s]
+					var mCount = parseInt(timeCount / 60);
+					var sCount = timeCount % 60;
+					if(mCount < 10) {
+						if(sCount < 10) {
+							html = "00:0" + mCount + ":0" + sCount;
+						} else {
+							html = "00:0" + mCount + ":" + sCount;
+						}
+					} else {
+						if(sCount < 10) {
+							html = "00:" + mCount + ":0" + sCount;
+						} else {
+							html = "00:" + mCount + ":" + sCount;
+						}
+					}
+				} else {
+					var hCount = parseInt(timeCount / 3600);
+					var msCount = timeCount % 3600;
+					var mCount = parseInt(msCount / 60);
+					var sCount = msCount % 60;
+					if(hCount < 10) {
+						if(mCount < 10) {
+							if(sCount < 10) {
+								html = "0" + hCount + ":0" + mCount + ":0" + sCount;
+							} else {
+								html = "0" + hCount + ":0" + mCount + ":" + sCount;
+							}
+						} else {
+							if(sCount < 10) {
+								html = "0" + hCount + ":" + mCount + ":0" + sCount;
+							} else {
+								html = "0" + hCount + ":" + mCount + ":" + sCount;
+							}
+						}
+					} else {
+						if(mCount < 10) {
+							if(sCount < 10) {
+								html = hCount + ":0" + mCount + ":0" + sCount;
+							} else {
+								html = hCount + ":0" + mCount + ":" + sCount;
+							}
+						} else {
+							if(sCount < 10) {
+								html = hCount + ":" + mCount + ":0" + sCount;
+							} else {
+								html = hCount + ":" + mCount + ":" + sCount;
+							}
+						}
+					}
+				}
+				$("#timeCount").html(html);
+			}, 1000);
+			rec.record({
+				filename: "_doc/audio/"
+			}, function(path) {
+				if(voiceLengthNum <= 0) {
+					mui.toast("录音时长为0s，请重新录音")
+					return false;
+				}
+				var audio = {
+					name: path
+				};
+				audios.push(audio);
+				var idnum = new Date().getTime();
+				var aitem = '<div class="audio">' +
+					'<div>' +
+					'<span class="mui-icon audio-flag"></span>' +
+					'</div>' +
+					'<div class="audioPlay" id="play' + idnum + '" length="' + voiceLengthNum + '">' +
+					'<span>' + voiceLengthStr + '</span>' +
+					'<span style="display: none;">' + path + '</span>' +
+					'</div>' +
+					'<div id="del' + idnum + '">' +
+					'<span class="mui-icon audio-remove"></span>' +
+					'</div>' +
+					'</div>';
+				$('#recordBox').append(aitem);
+
+				//绑定tap事件
+				/*$('#play' + idnum).on('tap', function() {
+					playAudio(this);
+				});*/
+				bindAudioEvent();
+				$('#del' + idnum).on('tap', function() {
+					removeAudio(this, audio);
+				});
+			}, function(e) {
+				console.log(e.message);
+			});
+		}
+		
+		function bindAudioEvent(){
+			audioEvent.bindPlay();
+		}
+		var audioEvent = {
+			bindPlay:function(){
+				$('.audioPlay').on('tap',function(){
+					$('.audioPlay').unbind('tap');
+					var path = $(this).attr('path');
+					playAudio(this);
+				});
+			},
+			unbindPlay:function(){
+				$('.audioPlay').unbind('tap');
+			}
+		}
+		
+		function removeAudio(target, audio) {
+			var btn = ["确定", "取消"];
+			mui.confirm('确认删除该条音频吗？', '', btn, function(e) {
+				if(e.index == 0) {
+					$(target).parent().remove();
+					audios.remove(audio);
+				}
+			});
+		}
+
+		function playAudio(target) {
+			var self = $(target);
+			var path = self.children("span:last-child").text();
+			var player = plus.audio.createPlayer(path);
+			var length = self.attr('length');
+			var cssj = self.children("span:first-child").text(); //初始时间
+			player.play(function() {
+				audioEvent.bindPlay();
+				self.prev().children().removeClass('play');
+				self.children("span:first-child").text(cssj); //播放完毕后恢复初始时间
+			});
+			timeMinus(self, length);
+		}
+
+		function timeMinus(self, length) {
+			self.prev().children().addClass('play');
+			var minusInterVal = window.setInterval(function() {
+				length--;
+				if(length == 0) {
+					window.clearInterval(minusInterVal);
+				}
+				if(length < 60) {
+					self.children("span:first-child").text(length + '"');
+				} else {
+					var minute = parseInt(length / 60);
+					var second = parseInt(length % 60);
+					var textStr = second != 0 ? (minute + '\'' + second + '"') : (minute + '\'');
+					self.children("span:first-child").text(textStr);
+				}
+			}, 1000);
+		}
+
+		function timeFomart() {
+			voiceLengthNum = timeCount;
+			if(timeCount < 60) {
+				voiceLengthStr = timeCount + '"';
+			} else {
+				var minute = parseInt(timeCount / 60);
+				var second = parseInt(timeCount % 60);
+
+				voiceLengthStr = second != 0 ? (minute + '\'' + second + '"') : (minute + '\'');
+			}
+		}
+
+		function stopRecord() {
+			isRecord = false;
+			rec.stop();
+			timeFomart();
+			timeCount = 0;
+			$("#timeCount").html('00:00:00');
+			$("#timeCount").hide();
+			window.clearInterval(startInterval);
+		}
+		
+		
+		//找出数组元素下标
+		Array.prototype.indexOf = function(val) {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] == val) return i;
+			}
+			return -1;
+		};
+		//删除指定元素
+		Array.prototype.remove = function(val) {
+			var index = this.indexOf(val);
+			if (index > -1) {
+				this.splice(index, 1);
+			}
+		};
+	</script>
+</html>

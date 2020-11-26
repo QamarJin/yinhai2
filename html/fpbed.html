@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/mui.poppicker.css"/>
+		
+		<style type="text/css">
+			.mui-poppicker-btn-ok{
+				background: #0FA3E5;
+				border: none;
+			}
+		</style>
+	</head>
+
+	<body style="background: #FFF;">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">分配床位</span>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+			<ul class="mui-table-view" id="patientul">
+			</ul>
+		</div>
+		
+	</body>
+	<script src="../js/babel.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js"></script>
+	<script type="text/javascript" src="../js/zepto.min.js" ></script>
+	<script src="../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.poppicker.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var bed;
+		var patient;
+		mui.init();
+		mui.plusReady(function() {
+			//普通示例
+			var userPicker = new mui.PopPicker();
+			
+			var serverip = localStorage.getItem("serverip");
+			var param = {};
+			var hasArea = localStorage.getItem("hasArea");
+			param['hasArea']  = hasArea;
+			if(hasArea==1){
+				param['areaid'] = localStorage.getItem("areaid");
+			}else{
+				param['deptid'] = localStorage.getItem("deptid");
+			}
+			
+			var hasSetDept = localStorage.getItem("hasSetDept");
+			
+			if(hasSetDept == 1){
+				param['hasSetDept'] = 1;
+			}else{
+				param['hasSetDept'] = 0;
+			}
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getUpfpBed.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	var bed = data.bed;
+					var patient = data.patient;
+					userPicker.setData(bed);
+					$('#patientul').html('');
+					for(var i=0;i<patient.length;i++){
+						var html = '<li class="mui-table-view-cell"><span style="display:none;">'+patient[i].patientid+'</span>'+
+							'<h4 style="color: #444;font-weight: 500;">'+patient[i].name
+							+'&nbsp;&nbsp;性别:'+patient[i].sex+'&nbsp;&nbsp;年龄:'+patient[i].age+'</h4>'+
+							'<h5>'+patient[i].diagnosis+'</h5>'+
+							'<button id="btn'+i+'" type="button" class="mui-btn mui-btn-success" style="background: #0FA3E5;border: none;">'+
+								'分床'+
+							'</button>'+
+						'</li>';
+						$('#patientul').append(html);
+						var showUserPickerButton = document.getElementById('btn'+i);
+						showUserPickerButton.addEventListener('tap', function(event) {
+							userPicker.show(function(items) {
+								var bedid = items[0].value;
+								param['bedid'] = bedid;
+								param['empid'] = localStorage.getItem("loginid");
+								param['patientid'] = document.getElementById(event.target.id).parentNode.firstChild.innerText;
+								
+								$.ajax({
+							        type: 'POST',
+							        url: 'http://'+serverip+'/deskNurse/app/fpbed.do',
+							        data: param,
+							        dataType: "json",
+							        success: function(data){
+							        	if(data.success){
+											var tmp = [];
+											for(var j=0;j<bed.length;j++){
+												if(bed[j].value!=bedid){
+													tmp.push(bed[j]);
+												}
+											}
+											userPicker.setData(tmp);
+											
+											showUserPickerButton.parentNode.remove();
+											mui.toast('分床成功');
+											
+											var home = plus.webview.getWebviewById("home");
+											mui.fire(home,"loadDaiban");
+										}else{
+											mui.toast('分床失败');
+											return false;
+										}
+							        }
+							    });
+								
+							});
+						}, false);
+					}
+		        }
+		    });
+		});
+	</script>
+</html>

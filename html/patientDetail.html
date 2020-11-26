@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			body{
+				background: #F6F6F6;
+			}
+			.mui-bar-nav {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+			#header{
+				background: -webkit-linear-gradient(left, #03a9f6 , #29b7f6); 
+				background: -o-linear-gradient(right, #03a9f6 , #29b7f6); 
+				background: -moz-linear-gradient(right, #03a9f6 , #29b7f6); 
+				background: linear-gradient(to right, #03a9f6 , #29b7f6);
+			}
+			#basicInfo{
+				height: 12.5rem;
+				background-size:100% auto ;
+				background-repeat: no-repeat;
+				background-image:url(../image/detail/bg-button.png) ;
+			}
+			
+			.touxiang{
+				height: 3.2rem;
+				width: 3.2rem;
+				background-size: cover;
+				background-repeat:no-repeat ;
+			}	
+			.touxiang.boy{
+				background-image:url(../image/detail/boy-detail.png) ;
+			}
+			.touxiang.girl{
+				background-image:url(../image/detail/gril-detail.png) ;
+			}
+			
+			#jbxxInfo{
+				padding: 0.5rem 1rem;
+			}
+			#jbxxInfo>div>div{
+				color: #FFF;
+				padding-left: 0.5rem;
+				font-size: 15px;
+			}
+			#feiyongInfo{
+				margin: 0.5rem auto;
+				height: 5rem;
+				width: 86%;
+				background: #FFF;
+				border-radius:0.2rem ;
+				-webkit-border-radius:0.2rem ;
+				box-shadow: 1px 3px 5px #ccc;
+				-webkit-box-shadow: 1px 3px 5px #ccc;
+			}
+			
+			.dbpic{
+				width: 2rem;
+				height: 2rem;
+				margin: 0 auto;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.dbpic.peiye{
+				background-image:url(../image/detail/Cargille-icon.png) ;
+			}
+			.dbpic.peiyehedui{
+				background-image:url(../image/detail/check-icon.png) ;
+			}
+			.dbpic.peiyezhixing{
+				background-image:url(../image/detail/infusion-icon.png) ;
+			}
+			.dbpic.pishi{
+				background-image:url(../image/detail/ast-icon.png) ;
+			}
+			.dbpic.shoushu{
+				background-image:url(../image/detail/scalpel-icon.png) ;
+			}
+			.dbpic.biaobenhedui{
+				background-image:url(../image/detail/microscope-icon.png) ;
+			}
+			.dbpic.shoushu{
+				background-image:url(../image/detail/popelo-icon.png) ;
+			}
+			.dbpic.qianfeirenshu{
+				background-image:url(../image/detail/scalpel-icon.png) ;
+			}
+			.dbpic.feichuang{
+				background-image:url(../image/detail/bed-icon.png) ;
+			}
+			.dbpic.check-result{
+				background-image:url(../image/detail/result-icon.png) ;
+			}
+			.dbpic.xinyizhu{
+				background-image:url(../image/detail/Medicaladvice-icon.png) ;
+			}
+			.dbtext{
+				color: #666;
+				text-align: center;
+				font-size: 14px;
+				line-height: 2rem;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">病人详细信息</span>
+		</header>
+		<div class="mui-content" style="background: #F6F6F6;">
+			<div id="basicInfo">
+				<div class="mui-row" style="height: 6rem;">
+					<div class="mui-col-sm-2" style="width: 15%;padding-top: 1.5rem;padding-left:1rem ;">
+						<div id="sex" class="touxiang girl"></div>
+					</div>
+					<div id="jbxxInfo" class="mui-col-sm-10" style="width: 85%;">
+						<div style="height: 2rem;" class="mui-row">
+							<div id="name" class="mui-col-sm-3" style="width: 25%;font-weight: 600;"></div>
+							<div id="age" class="mui-col-sm-3" style="width: 25%;"></div>
+							<div id="playType" class="mui-col-sm-6" style="width: 50%;"></div>
+						</div>
+						<div style="height: 2rem;" class="mui-row">
+							<div id="zyh" class="mui-col-sm-6" style="width: 50%;"></div>
+							<div id="zydoctor" class="mui-col-sm-6" style="width: 50%;"></div>
+						</div>
+						<div style="height: 2rem;" class="mui-row">
+							<div id="bedno" class="mui-col-sm-6" style="width: 50%;"></div>
+							<div id="nl" class="mui-col-sm-6" style="width: 50%;"></div>
+						</div>
+					</div>
+				</div>
+				<div id="feiyongInfo" class="mui-row">
+					<div class="mui-col-sm-4" style="width: 33%;">
+						<div id="yjf" style="height: 2rem;line-height: 2rem;text-align: center;font-weight:600 ;color: #444;"></div>
+						<div style="height: 2rem;line-height: 2rem;text-align: center;font-size:12px ;color: #999;">预交费</div>
+					</div>
+					<div class="mui-col-sm-4" style="width: 33%;">
+						<div id="zfy" style="height: 2rem;line-height: 2rem;text-align: center;font-weight:600 ;color: #0FA3E5;"></div>
+						<div style="height: 2rem;line-height: 2rem;text-align: center;font-size:12px ;color: #999;">总费用</div>
+					</div>
+					<div class="mui-col-sm-4" style="width: 33%;">
+						<div id="qf" style="height: 2rem;line-height: 2rem;text-align: center;font-weight:600 ;color: #F75758;"></div>
+						<div style="height: 2rem;line-height: 2rem;text-align: center;font-size:12px ;color: #999;">欠费</div>
+					</div>
+				</div>
+			</div>
+			<div style="background: #FFF;padding: 0.5rem 0;">
+				<div style="font-weight: 600;color: #444;padding-left: 0.5rem;">诊断</div>
+				<div style="height: 1px;margin-left: 0.5rem;background: #EEE;margin-top: 0.5rem;"></div>
+				<div id="zd" style="color: #666;padding:0.5rem 0.5em;">
+				</div>
+			</div>
+			<div style="background: #FFF;padding: 0.5rem 0;margin-top: 0.5rem;">
+				<div style="font-weight: 600;color: #444;padding-left: 0.5rem;">今日待办(<span id="dbcount" style="color: #F75758;"></span>)</div>
+				<div style="height: 1px;margin-left: 0.5rem;background: #EEE;margin-top: 0.5rem;"></div>
+				<div id="dblist" class="mui-row">
+				</div>
+			</div>
+			
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		
+		mui.plusReady(function(){
+			var patientid =  plus.webview.currentWebview().patientid;
+			load(patientid);
+		});
+		
+		function load(id){
+			var serverip = localStorage.getItem("serverip");
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getPatientDetail.do',
+		        data: {patientid: id},
+		        dataType: "json",
+		        success: function(patient){
+			    	var tmp_doctor;
+			    	if(patient.zydoctor){
+			    		tmp_doctor = patient.zydoctor;
+			    	}else{
+			    		tmp_doctor = '无';
+			    	}
+
+			    	var tmp_bedno;
+			    	if(patient.bedno){
+			    		tmp_bedno = patient.bedno;
+			    	}else{
+			    		tmp_bedno = '未分床';
+			    	}	
+
+			    	$('#name').html(patient.name);
+			    	$("#age").html(patient.age+patient.ageunit);
+			    	$('#playType').html("费用类型:"+patient.paytype);
+			    	$('#zyh').html("住院号:"+patient.zyh);
+			    	$('#zydoctor').html("主管医生:"+tmp_doctor);
+			    	$("#bedno").html("床号:"+tmp_bedno);
+			    	var nl;
+			    	if(patient.nl=='1'){
+			    		nl = "护理级别:一级";
+			    	}else if(patient.nl=='2'){
+			    		nl = "护理级别:二级";
+			    	}else if(patient.nl=='3'){
+			    		nl = "护理级别:三级";
+			    	}else if(patient.nl=='4'){
+			    		nl = "护理级别:特级";
+			    	}else if(patient.nl=='icu'){
+			    		nl = "护理级别:ICU";
+			    	}else{
+			    		nl = "护理级别:一级";
+			    	}
+			    	
+			    	if(patient.sex=='1'){
+			    		$("#sex").removeClass('girl');
+			    		$("#sex").addClass("boy");
+			    	}else{
+			    		$("#sex").removeClass('boy');
+			    		$("#sex").addClass("girl");
+			    	}
+			    	
+			    	$('#nl').html(nl);
+			    	$('#yjf').html(patient.yjf);
+			    	$('#zfy').html(patient.zfy);
+			    	$('#qf').html(patient.qf);
+			    	$('#zd').html(patient.zd);
+			    	
+			    	//添加待办信息
+					$('#dblist').html('');
+					var totalCount = 0;
+					var db = patient.dbInfo;
+					var daibanarr = ['001','002','003','004','005','006','008','009','012'];
+					for(var i=0;i<daibanarr.length;i++){
+						var count = db[daibanarr[i]];
+						totalCount+=count;
+						var item = '<div class="mui-col-sm-3" style="width: 25%;margin-top:0.5rem;">';
+						if(count>0){
+							if(daibanarr[i]=='001'){
+								item += '<div class="dbpic peiye"></div><div class="dbtext">待配液</div>';
+							}else if(daibanarr[i]=='002'){
+								item += '<div class="dbpic peiyehedui"></div><div class="dbtext">待核对</div>';
+							}else if(daibanarr[i]=='003'){
+								item += '<div class="dbpic peiyezhixing"></div><div class="dbtext">待执行</div>';
+							}else if(daibanarr[i]=='004'){
+								item += '<div class="dbpic biaobenhedui"></div><div class="dbtext">待完成</div>';
+							}else if(daibanarr[i]=='005'){
+								item += '<div class="dbpic pishi"></div><div class="dbtext">口服</div>';
+							}else if(daibanarr[i]=='006'){
+								item += '<div class="dbpic shoushu"></div><div class="dbtext">注射</div>';
+							}else if(daibanarr[i]=='008'){
+								item += '<div class="dbpic feichuang"></div><div class="dbtext">皮试</div>';
+							}else if(daibanarr[i]=='009'){
+								item += '<div class="dbpic check-result"></div><div class="dbtext">雾化</div>';
+							}else if(daibanarr[i]=='012'){
+								item += '<div class="dbpic xinyizhu"></div><div class="dbtext">分床</div>';
+							}
+							item+='</div>';
+							$('#dblist').append(item);
+						}
+					}
+					$("#dbcount").html(totalCount);
+		       }
+		    });
+		}
+		
+		function openDbWind(url){
+			//console.log('==========================='+url+'=======================');
+		}
+		
+	</script>
+</html>

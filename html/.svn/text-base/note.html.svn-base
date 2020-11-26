@@ -1,0 +1,467 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.textareaIcon{
+				position: absolute;
+				right: 1.5rem;
+				bottom: 0;
+			}
+			
+			.mui-content-padded{
+				margin: 0;
+				background:#FFF ;
+			}
+			body{
+				background: #FFF;
+			}
+			textarea{
+				border: none;
+				color: #444;
+			}
+			.boy-icon{
+				width: 4rem;
+				height: 4rem;
+				background-image: url(../image/wd/boy-80px.png);
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.girl-icon{
+				width: 4rem;
+				height: 4rem;
+				background-image: url(../image/wd/gril-80px.png);
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.titleDiv{
+				width: 50%;
+				color: #444;
+				line-height: 2rem;
+			}
+			#picture>ul>li>a{
+				color: #0FA3E5;
+			}
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			p{
+				color: #000 !important;
+				font-size: 0.9rem !important;
+			}
+			p img {
+				max-width: 100%;
+			}
+			p span{
+				margin-left: 90%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">便签</span>
+			<a id="btnComplete" style="color: #FFF;float: right;margin-top: 0.8rem;">完成</a>
+			<a id="spinner" style="float: right;margin-top: 0.8rem;display: none;"><span class="mui-spinner"></span></a>
+		</header>
+		<div class="mui-content">
+			<div class="mui-content-padded" style="padding: 0;margin:0;overflow: auto;">
+				<div class="mui-input-row">
+					<textarea id="note" rows="5" placeholder="请输入文字"></textarea>
+					<!--
+					<a id="btnVoice" href="javascript:void(0)" class="textareaIcon" ><img style="width: 1.15rem;height: 1.5rem;"  src="../image/wd/voice.png"/></a>
+					-->
+				</div>
+				<div class="geduan"></div>
+				<div style="font-weight:600 ;height: 3rem;line-height: 3rem;padding-left: 0.5rem;border-bottom: 1px #ECECEC solid;">
+					图片
+					<a id="btnAddPic" style="float: right;margin-right: 1.5rem;"><span style="font-size: 1.5rem;" class="mui-icon mui-icon-plusempty"></span></a>
+				</div>
+				<div id="picbox" style="margin: 0.5rem;">
+				</div>
+			</div>
+		</div>
+		
+		<div id="picture" class="mui-popover mui-popover-action mui-popover-bottom">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a id="btnCamera" href="javascript:void(0)">拍照</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="btnAlbum" href="javascript:void(0)">选取现有照片</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="btnVideo" href="javascript:void(0)">录像</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="btnVideoAlbum" href="javascript:void(0)">选取现有视频</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a id="btnCancel" href="#picture"><b>取消</b></a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.zoom.js"></script>
+	<script src="../js/mui.previewimage.js"></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		//mui初始化
+		mui.init({
+			swipeBack:false //关闭右滑关闭功能
+		});
+		mui.previewImage();
+		
+		$("#btnComplete").bind('tap',function(){
+			//fnComplete();
+			uploadFile();
+		});
+		
+		$('#btnAddPic').on('tap',function(){
+			mui('#picture').popover('show');
+		});
+		
+		function fnComplete(){
+			$('#btnComplete').hide();
+			$('#spinner').show();
+			
+			var param = {};
+			param['note'] = $('#note').val();
+			param['empid'] = localStorage.getItem("loginid"); 
+			param['patientid'] = plus.webview.currentWebview().patientid;
+			
+			var list = '';
+			
+			for(var i=0;i<base64Arr.length;i++){
+				list+=base64Arr[i]+',';
+			}
+			
+			list = list.substring(0,list.length-1);
+			
+			param['list'] = list;
+			
+			var serverip = localStorage.getItem("serverip");
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/saveNote.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	if(data.success){
+						$('#btnComplete').show();
+						$('#spinner').hide();
+						mui.back();
+					}else{
+						$('#btnComplete').show();
+						$('#spinner').hide();
+						mui.toast('保存失败');
+					}
+		        }
+		    });
+		}
+		
+		$("#btnCamera").bind('tap',function(){
+			UCam();
+			mui('#picture').popover('hide');
+			getMedia('camera','pic');
+		});
+		
+		$("#btnAlbum").bind('tap',function(){
+			galleryPic("vedio");
+			mui('#picture').popover('hide');
+			getMedia('album','pic');
+		});
+		
+		$("#btnVideo").bind('tap',function(){
+			getMedia('camera','video');
+		});
+		
+		$("#btnVideoAlbum").bind('tap',function(){
+			getMedia('camera','video');
+		});
+		
+		$("#btnVoice").bind('tap',function(){
+			openVoice();
+		});
+		
+		var base64Arr = [];
+		var photos=[];
+		var count = 0;
+		
+		//拍照
+		function UCam() {
+			plus.camera.getCamera().captureImage(function(p) {
+				showPic(p,"camera")
+			}, function(e) {
+				console.info("失败：" + e.message);
+			}, {
+				filename: "_doc/camera/",
+				index: 1
+			});
+		}
+		//从相册选择图片
+		function galleryPic(type) {
+			plus.gallery.pick(function(e) {
+				var fiLength = e.files.length;
+				for(var i = 0; i < fiLength; i++) {
+					showPic(e.files[i],"gallery");
+				}
+			}, function(e) {
+				console.info("取消选择");
+			}, {
+				filter: type,
+				system: true,
+				multiple: true
+			})
+		}
+		var photoCount=0;
+		//压缩展示图片
+		function showPic(imgurl,type) {
+			var pt = imgurl;
+			var dstP;
+			if("gallery"==type){
+				dstP= parent.plus.io.convertLocalFileSystemURL('_doc/camera/'+new Date().getTime()+".jpg");
+			}else{
+				dstP = pt;
+			}
+			plus.zip.compressImage({
+				src: pt,
+				dst: dstP,
+				quality: 80,
+				overwrite: true,
+				format: "png",
+				width: "800px",
+				height: "1280px"
+			}, function(e) {
+				var path = plus.io.convertLocalFileSystemURL(e.target);
+				var photo = {
+					name: pt,
+					path: path
+				}
+				
+				photos.push(photo);
+				$('#picbox').append('<p id="p_'+photoCount+'"><span class="mui-icon mui-icon-closeempty"></span>'+
+									'<img width="100px" height="100px" src="'+path+
+									'" data-preview-src="" data-preview-group="1" /></p>');
+				$('#p_'+photoCount).find('span').on('tap',function(){
+					$(this).parent().remove();
+					photos.remove(photo);
+				});
+				photoCount++;
+			}, function() {});
+		}
+		
+		
+		//上传文件
+		function uploadFile(){
+			var note = 　$('#note').val();
+			var empid = localStorage.getItem("loginid"); 
+			var patientid= plus.webview.currentWebview().patientid;
+			var serverip = localStorage.getItem("serverip");
+			var task = plus.uploader.createUpload("http://"+serverip+ "/deskNurse/doctor/uploadNote.do", {
+					method: "POST"
+				},
+				function(t, status) { //上传完成
+					if(status == 200) {
+						mui.back();
+					} else {
+						mui.toast("文件上传失败");
+					}
+				}
+			);
+			task.addData('note', note);
+			task.addData('empid', empid);
+			task.addData('patientid', patientid);
+			console.log(photos.length);
+			if(photos.length>0){
+				for (var i=0;i<photos.length;i++) {
+					task.addFile(photos[i].path, {
+						key: photos[i].name
+					});
+				}
+			}
+			task.start();
+		}
+		
+		
+		
+		function openVoice(){
+			md.openWin({
+			    name: 'voice',
+			    url: 'voice.html',
+			    pageParam: {},
+			    reload:true
+			});
+		}
+		
+		//找出数组元素下标
+		Array.prototype.indexOf = function(val) {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] == val) return i;
+			}
+			return -1;
+		};
+		//删除指定元素
+		Array.prototype.remove = function(val) {
+			var index = this.indexOf(val);
+			if (index > -1) {
+				this.splice(index, 1);
+			}
+		};
+	</script>
+</html>

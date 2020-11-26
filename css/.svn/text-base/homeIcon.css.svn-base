@@ -1,0 +1,99 @@
+@font-face {
+	font-family: Muiicons;
+	font-weight: normal;
+	font-style: normal;
+	src: url('../fonts/homeIcon.ttf') format('truetype');
+}
+
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+
+.icon-chuangkouwindow31:before {
+	content: "\e650";
+	color: #f5a305;
+}
+
+.icon-shiyanshi:before {
+	content: "\e6c9";
+	color: #7ae6ff;
+}
+
+.icon-zhinenghuaxuanpinicon3:before {
+	content: "\e603";
+	color: #f57105;
+	
+}
+
+.icon-shuye:before {
+	content: "\e660";
+	color: #1e9fcc;
+}
+
+.icon-koufu:before {
+	content: "\e6da";
+	color: #7ae6ff;
+}
+
+.icon-zhushe:before {
+	content: "\e626";
+	color: #f57105;
+}
+
+
+.icon-pishiluru:before {
+	content: "\e659";
+	color: #1e9fcc;
+}
+
+.icon-fangdumianju:before {
+	content: "\e503";
+	color: #f5a305;
+}
+
+.icon-biaobenxinxi:before {
+	content: "\e632";
+	color: #f57105;
+}
+
+.icon-shoushu:before {
+	content: "\e652";
+	color: #1e9fcc;
+}
+
+.icon-qianfei-:before {
+	content: "\e64c";
+	color: #f5a305;
+}
+
+.icon-ward:before {
+	content: "\e5a9";
+	color: #7ae6ff;
+}
+
+.icon-bingrenku:before {
+	content: "\e70f";
+	color: #ffffff;
+}
+
+.icon-yizhu:before {
+	content: "\e699";
+	color: #ffffff;
+	
+}
+
+.icon-bianqian:before {
+	content: "\e677";
+	color: #ffffff;
+	
+}
+
+.icon-gongzuoliangtongji:before {
+	content: "\e606";
+	color: #ffffff;
+}

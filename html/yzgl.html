@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+	<head class="mui-bar mui-bar-nav">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.mui-content-padded{
+				margin: 0;
+			}
+			.mui-content{
+				background: #F6F6F6;
+			}
+			.mui-content-padded{
+				margin: 0;
+			}
+			.mui-checkbox input[type=checkbox]:checked:before, 
+			.mui-radio input[type=radio]:checked:before {
+			    color: #0FA3E5;
+			}
+
+            .mychecked:before{
+                content: '\e442' !important;
+                color: #0FA3E5 !important;
+            }
+
+            .myunchecked:before{
+                content: '\e411' !important;
+                color: #999 !important;
+            }
+            .mui-input-clear{
+				text-align: center;
+				margin: 0 !important;
+			}
+			.mui-input-row .mui-input-clear~.mui-icon-clear, .mui-input-row .mui-input-password~.mui-icon-eye, .mui-input-row .mui-input-speech~.mui-icon-speech{
+				top: 0.4rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="yzglHeader" class="mui-bar mui-bar-nav header-android">
+			<span id="yzglTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">!请扫描或选择病人</span>
+            <a class="my-icon-sicker mui-icon mui-icon-bars mui-pull-right" href="javascript:void(0)" ></a>
+		</header>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<div id="yzglslider" class="mui-slider" style="background: #FFF;">
+					<div id="btnRefreshAdvince" class="btnRefresh">
+						<a style="margin-right: 0.1rem;"><span id="freshLog" class="mui-icon mui-icon-loop" style="color: #999;font-size: 1.2rem;font-weight: 600;"></span></a>
+					</div>
+					<div id="yzglsliderSegmentedControl" style="height: 3em;padding-top: 0.7rem;" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted tabbar-shadow">
+						<a id="kfItem" class="mui-control-item" href="#yzgl-kf-item" style="font-size:1rem ;color: #444;color: #0FA3E5;font-weight: 600;">
+							口服
+						</a>
+						<a id="zsItem" class="mui-control-item" href="#yzgl-zs-item" style="font-size:1rem ;color: #444;">
+							注射
+						</a>
+						<a id="psItem" class="mui-control-item" href="#yzgl-ps-item" style="font-size:1rem ;color: #444;">
+							皮试
+						</a>
+						<a id="whItem" class="mui-control-item" href="#yzgl-wh-item" style="font-size:1rem ;color: #444;">
+							雾化
+						</a>
+						<!--<a id="bbItem" class="mui-control-item" href="#yzgl-bb-item" style="font-size:1rem ;color: #444;">
+							标本
+						</a>-->
+					</div>
+					<div id="yzglSiderGroup" class="mui-slider-group">
+						<div id="yzgl-kf-item" style="border:none;"  class="mui-slider-item mui-control-content mui-active">
+							<div id="yzgl-kf-scroll" class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div id="kfyScorll" class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="yzHeader-kf" class="mui-row" style="display: none;border-bottom: 1px solid #BBBBBB;height: 3.5rem;padding: 0.5rem 1rem;line-height: 3rem;">
+									    <div class="mui-input-row mui-checkbox mui-left mui-col-sm-6" style="width: 50%;">
+											<input id="checkAll-kf" type="checkbox" style="left: 0;" value="0">
+											<label style="padding: 0;margin-left: 2rem;">全选</label>
+										</div>
+									    <div class="mui-col-sm-6" style="width: 50%;">
+											<button id="btnSaveKf" class="btnSave">保存</button>
+										</div>
+									</div>
+									<div id="kfyzl">
+										<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">请扫描或者选择病人</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="yzgl-zs-item" style="border:none;"  class="mui-slider-item mui-control-content">
+							<div id="yzgl-ps-scroll" class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div id="zsyScroll" class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="yzHeader-zs" class="mui-row" style="display: none;border-bottom: 1px solid #BBBBBB;height: 3.5rem;padding: 0.5rem 1rem;line-height: 3rem;">
+									    <div class="mui-input-row mui-checkbox mui-left mui-col-sm-6" style="width: 50%;">
+											<input id="checkAll-zs" type="checkbox" style="left: 0;" value="0">
+											<label style="padding: 0;margin-left: 2rem;">全选</label>
+										</div>
+									    <div class="mui-col-sm-6" style="width: 50%;">
+											<button id="btnSaveZs" class="btnSave">保存</button>
+										</div>
+									</div>
+									<div id="zsyzl">
+										<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">请扫描或者选择病人</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="yzgl-ps-item" style="border:none;"  class="mui-slider-item mui-control-content">
+							<div id="yzgl-ps-scroll" class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div id="psScroll" class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="yzHeader-ps" class="mui-row" style="display: none;height: 3.5rem;padding: 0.5rem 1rem;line-height: 3rem;">
+										<button id="btnSavePs" class="btnSave">保&nbsp;&nbsp;存</button>
+									</div>
+									<div id="psyzl" style="margin-top: 0.5rem;">
+										<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">请扫描或者选择病人</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="yzgl-wh-item" style="border:none;"  class="mui-slider-item mui-control-content">
+							<div id="yzgl-wh-scroll" class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div id="whScroll" class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="yzHeader-wh" class="mui-row" style="display: none;border-bottom: 1px solid #BBBBBB;height: 3.5rem;padding: 0.5rem 1rem;line-height: 3rem;">
+									    <div class="mui-input-row mui-checkbox mui-left mui-col-sm-6" style="width: 50%;">
+											<input id="checkAll-wh" type="checkbox" style="left: 0;" value="0">
+											<label style="padding: 0;margin-left: 2rem;">全选</label>
+										</div>
+									    <div class="mui-col-sm-6" style="width: 50%;">
+											<button id="btnSaveWh" class="btnSave">保存</button>
+										</div>
+									</div>
+									<div id="whyzl">
+										<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">请扫描或者选择病人</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--<div id="yzgl-bb-item" style="border:none;"  class="mui-slider-item mui-control-content">
+							<div id="yzgl-bb-scroll" class="mui-scroll-wrapper" style="overflow-y: auto;">
+								<div id="bbScroll" class="mui-scroll" style="padding-bottom: 1rem;">
+									<div id="yzHeader-bb" class="mui-row" style="display: none;border-bottom: 1px solid #BBBBBB;height: 3.5rem;padding: 0.5rem 1rem;line-height: 3rem;">
+										<div class="mui-input-row mui-checkbox mui-left mui-col-sm-6" style="width: 50%;">
+											<input id="checkAll-bb" type="checkbox" style="left: 0;" value="0">
+											<label style="padding: 0;margin-left: 2rem;">全选</label>
+										</div>
+										<div class="mui-col-sm-6" style="width: 50%;">
+											<button id="btnSaveBb" class="btnSave">保存</button>
+										</div>
+									</div>
+									<div id="bbyzl">
+										<div style="text-align: center;margin-top: 4rem;color: #999;font-size: 1.5rem;">请扫描或者选择病人</div>
+									</div>
+								</div>
+							</div>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="../js/mui.poppicker.js"></script>
+	<script type="text/javascript" src="../js/zepto.fx.js" ></script>
+	<script src="../js/shouye.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/scanner.js" ></script>
+	<script src="../js/data.select.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/yzgl.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/base.js" ></script>
+	<script>
+		window.addEventListener('loadAdvince',function(e){
+			var patientid = e.detail.id;
+			selectPatient(patientid);
+			loadAdvince(patientid);
+		});
+
+		window.addEventListener('scanYzgl',function(e){
+			scanYzgl();
+		});
+		window.addEventListener('closeScanYzgl',function(e){
+			scanner.close();
+		});
+		mui.init({
+			gestureConfig:{
+				tap: true, //默认为true
+				doubletap: false, //默认为false
+				longtap: true, //默认为false
+				swipe: true, //默认为true
+				hold:false,//默认为false，不监听
+				release:false//默认为false，不监听
+			}
+		});
+		var yzPatientid='';
+		var yzglFlag = 0;
+		var tabFlag=2;
+		mui.plusReady(function(){
+		    //打开选择病人窗口
+		    $('.my-icon-sicker').bind('tap',function(){
+		    	openPatient();
+		    });
+		    yzglBindTap();
+		    yzglSlide();
+		    var tabGroupHeight = document.documentElement.clientHeight-44-50;
+		    $('#yzglSiderGroup').height(tabGroupHeight);
+		    
+		    //退出登录
+		    signOut();
+		});
+		
+		
+		/**
+		 * 打开病人列表
+		 */
+		function openPatient(){
+			mui.openWindow({
+				id: 'patient',
+			    url: 'patientList.html',
+			    extras: {detail:0,tabFlag:2},
+			    reload:true
+			});
+		}
+	</script>
+</html>

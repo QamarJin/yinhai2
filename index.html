@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+    <link rel="stylesheet" href="css/common.css" />
+    <style>
+        body{
+            margin:0;
+            padding:0;
+        }
+    </style>
+    <script src="js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/URL.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+   		document.addEventListener('plusready', function(){
+   			//scan();
+   			tabControl();
+
+   			//程序切换到后台自动关闭程序
+   			document.addEventListener("pause",function(){
+   				paushd();
+   			});
+   			//程序切换到前台取消自动关闭
+   			document.addEventListener("resume",function(){
+   				window.clearTimeout(timeout_paush);
+   			});
+   			
+   			var login=plus.webview.getLaunchWebview();
+   			mui.fire(login,'closeScanLogin');
+
+   		});
+
+   		//息屏一段时间后自动关闭程序
+		var timeout_paush;
+	    function paushd(){
+	    	timeout_paush =window.setTimeout(function(){
+	    		plus.runtime.quit();
+	    	},1000*600);
+	    }
+
+
+   		function tabControl(){
+   			var subInfos = [{
+			    url: 'html/home.html',
+			    id: 'home'
+			}, {
+			    url: 'html/tzlr.html',
+			    id: 'tzlr',
+			}, {
+			    url: 'html/yzgl.html',
+			    id: 'yzgl'
+			}, {
+			    url: 'html/hzxs.html',
+			    id: 'hzxs'
+			}, {
+			    url: 'html/wd.html',
+			    id: 'wd'
+			}];
+
+			var subStyles = {
+			    top: '0px',
+			    bottom: '51px'
+			};
+
+			// 根据id查询子页面的信息
+			var getSubInfoById = function(infoList, id) {
+			    var result = null;
+			    for(var i = 0, len = infoList.length; i < len; i++) {
+			        var _info = infoList[i];
+			        if(_info.id === id) {
+			            result = _info;
+			            break;
+			        }
+			    }
+			    return result;
+			};
+
+			var mainWv = plus.webview.currentWebview();
+			var activeTab = '';
+
+			// 创建所有子页面
+			for(var i=subInfos.length-1;i>=0;i--){
+				var subWebview = plus.webview.create(subInfos[i].url, subInfos[i].id, subStyles);
+				mainWv.append(subWebview);
+			}
+			//默认展示首页
+			activeTab = subInfos[0].id;
+
+			// 点击切换，动态创建其它webview；
+			mui('.mui-bar-tab').on('tap', 'a.mui-tab-item', function(e) {
+			    var _self = this;
+			    var targetTab = _self.getAttribute('data-id');
+			    if(targetTab === activeTab) {
+			        return;
+			    }
+			   var _subWv = plus.webview.getWebviewById(targetTab);
+			    // 若webview不存在，则创建；
+			    if(!_subWv) {
+			        var _subInfo = getSubInfoById(subInfos, targetTab);
+			        _subWv = plus.webview.create(_subInfo.url, _subInfo.id, subStyles);
+			        mainWv.append(_subWv);
+			    }
+			    _subWv.show();
+			    var home = plus.webview.getWebviewById("home"); 
+			    var tzlr = plus.webview.getWebviewById("tzlr");
+			    var yzgl = plus.webview.getWebviewById("yzgl");
+			    var hzxs = plus.webview.getWebviewById("hzxs");
+			    if(targetTab=="home"){
+			    	mui.fire(_subWv,'scanHome');
+			    	mui.fire(tzlr,'closeScanTzlr');
+			    	mui.fire(yzgl,'closeScanYzgl');
+			    	mui.fire(hzxs,'closeScanHzxs');
+			    }
+			    /*if(targetTab=="wd"){
+			    	mui.fire(home,'scanHome');
+			    }*/
+			    if(targetTab=="tzlr"){
+			    	mui.fire(_subWv,'scanTzlr');
+			    	mui.fire(home,'closeScanHome');
+			    	mui.fire(yzgl,'closeScanYzgl');
+			    	mui.fire(hzxs,'closeScanHzxs');
+			    }
+			    if(targetTab=="yzgl"){
+			    	mui.fire(_subWv,'scanYzgl');
+			    	mui.fire(tzlr,'closeScanTzlr');
+			    	mui.fire(home,'closeScanHome');
+			    	mui.fire(hzxs,'closeScanHzxs');
+			    }
+			    if(targetTab=="hzxs"){
+			    	mui.fire(_subWv,'scanHzxs');
+			    	mui.fire(tzlr,'closeScanTzlr');
+			    	mui.fire(yzgl,'closeScanYzgl');
+			    	mui.fire(home,'closeScanHome');
+			    }
+			    // 隐藏之前的webview
+			    plus.webview.getWebviewById(activeTab).hide('none');
+			    activeTab = targetTab;
+			});
+   		}
+    </script>
+</head>
+<body>
+	<nav class="mui-bar mui-bar-tab">
+	    <a class="mui-tab-item mui-active" data-id="home" id="shouyeli">
+			<span class="mui-icon my-icon-home"></span>
+			<span class="mui-tab-label">首页</span>
+		</a>
+		<a class="mui-tab-item" data-id="tzlr" id="tzlrli">
+			<span class="mui-icon my-icon-heart"></span>
+			<span class="mui-tab-label">体征录入</span>
+		</a>
+		<a class="mui-tab-item" data-id="yzgl" id="yzglli">
+			<span class="mui-icon my-icon-advice"></span>
+			<span class="mui-tab-label">医嘱管理</span>
+		</a>
+		<a class="mui-tab-item" data-id="hzxs" id="hzxsli">
+			<span class="mui-icon my-icon-tour"></span>
+			<span class="mui-tab-label">患者巡视</span>
+		</a>
+		<a class="mui-tab-item" data-id="wd" id="wdli">
+			<span class="mui-icon my-icon-me"></span>
+			<span class="mui-tab-label">我的</span>
+		</a>
+	</nav>
+</body>
+</html>

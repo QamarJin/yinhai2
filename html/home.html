@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+
+<head class="mui-bar mui-bar-nav">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title></title>
+	<link rel="stylesheet" href="../css/common.css" />
+	<link rel="stylesheet" href="../css/mui.min.css" />
+	<link rel="stylesheet" href="../css/homeIcon.css" />
+	<style type="text/css">
+			.mui-content {
+				background: #F6F6F6;
+			}
+
+			.mui-content-padded {
+				margin: 0;
+			}
+
+			.mui-input-group:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 11px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+
+			.mui-spinner {
+				height: 1.1rem;
+				width: 1.1rem;
+				margin-top: 0.4rem;
+				color: #FFF;
+			}
+
+			.mui-checkbox input[type=checkbox]:checked:before,
+			.mui-radio input[type=radio]:checked:before {
+				color: #0FA3E5;
+			}
+
+			.mychecked:before {
+				content: '\e442' !important;
+				color: #0FA3E5 !important;
+			}
+
+			.myunchecked:before {
+				content: '\e411' !important;
+				color: #999 !important;
+			}
+
+			.banner {
+				position: relative;
+				background-repeat: no-repeat;
+				background-size: cover;
+				height: 6.8rem;
+				background-image: url(../image/shouye/banner.png);
+			}
+
+			.banner>div {
+				text-align: center;
+			}
+
+			.banner>div>span {
+				color: white;
+				font-size: 1.1rem;
+			}
+
+			.mui-input-clear {
+				text-align: center;
+				margin: 0 !important;
+			}
+
+			.mui-input-row .mui-input-clear~.mui-icon-clear,
+			.mui-input-row .mui-input-password~.mui-icon-eye,
+			.mui-input-row .mui-input-speech~.mui-icon-speech {
+				top: 0.4rem;
+			}
+			.daiban-refres{
+				z-index: 999;
+				position: absolute;
+				right: 0.6rem;
+				bottom: 0.6rem;
+				width: 2rem;
+				height: 2rem;
+			}
+			.dd{
+				width: 2.7rem;
+			    height: 2.7rem;
+			    -moz-border-radius: 50%;
+			    -webkit-border-radius: 50%;
+			    border-radius: 50%;
+			    background-color: #55ACEE;
+			    font-size: 1.6rem!important;
+			    line-height: 2.7rem;
+			}
+			.tt{
+				margin-top: 0.8rem;
+			}
+		</style>
+</head>
+
+<body>
+<div class="banner">
+	<div style="height: 3rem;">
+		<span style="line-height: 3rem;">欢迎您，</span>
+		<span id="banner-empname" style="font-weight: 800;line-height: 3rem;"></span>
+	</div>
+	<div style="height: 3.8rem;">
+		<span id="banner-dept"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<span id="banner-empid"></span>
+	</div>
+	<div class="daiban-refres">
+		<span class="mui-icon mui-icon-loop"></span>
+	</div>
+</div>
+<ul id="daibanul" style="background: #FFF;" class="mui-table-view mui-grid-view mui-grid-9">
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="101">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/Cargille-icon.png);"></div>
+			<div class="mui-media-body">配液窗口</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="001">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/Cargille-icon.png);"></div>
+			<div class="mui-media-body">待配液</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="002">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/check-icon.png);">
+			</div>
+			<div class="mui-media-body">待核对</div>
+		</a>
+	</li>
+	<!--<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="003">
+        <a href="javascript:void(0)">
+            <div class="daibanpic mui-icon" style="background-image:url(../image/shouye/infusion-icon.png);"></div>
+            <div class="mui-media-body">待输液</div>
+        </a>
+    </li>-->
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="004">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/infusionfinish-icon-.png);"></div>
+			<div class="mui-media-body">正在输液</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="005">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/Oral-icon.png);"></div>
+			<div class="mui-media-body">口服</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="006">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/injection-icon.png);"></div>
+			<div class="mui-media-body">注射</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="008">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/ast-icon-.png);"></div>
+			<div class="mui-media-body">皮试</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="009">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/atomization-icon.png);"></div>
+			<div class="mui-media-body">雾化</div>
+		</a>
+	</li>
+	<!-- <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="014">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/biaoben-icon.png);"></div>
+			<div class="mui-media-body">标本采集</div>
+		</a>
+	</li> -->
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="010">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/scalpel-icon.png);"></div>
+			<div class="mui-media-body">手术申请</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="007">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/popelo-icon.png);"></div>
+			<div class="mui-media-body">欠费人数</div>
+		</a>
+	</li>
+	<!-- <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="012">
+		<a href="javascript:void(0)">
+			<div class="daibanpic mui-icon" style="background-image:url(../image/shouye/bed-icon.png);"></div>
+			<div class="mui-media-body">分床</div>
+		</a>
+	</li> -->
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="015">
+		<a href="javascript:void(0)">
+			<div class="daibanpic dd mui-icon icon-bingrenku"></div>
+			<div class="tt mui-media-body">病人查询</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="016">
+		<a href="javascript:void(0)">
+			<div class="daibanpic dd mui-icon icon-yizhu" ></div>
+			<div class="tt mui-media-body">医嘱查询</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="017">
+		<a href="javascript:void(0)">
+			<div class="daibanpic dd mui-icon icon-bianqian" ></div>
+			<div class="tt mui-media-body">巡视查询</div>
+		</a>
+	</li>
+	<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" style="padding: 0.15rem 0 0 0" code="018">
+		<a href="javascript:void(0)">
+			<div class="daibanpic dd mui-icon icon-gongzuoliangtongji"></div>
+			<div class="tt mui-media-body">完成工作</div>
+		</a>
+	</li>
+</ul>
+</body>
+<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/mui.picker.min.js"></script>
+<script src="../js/mui.poppicker.js"></script>
+<script type="text/javascript" src="../js/scanner.js" ></script>
+<script src="../js/shouye.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/data.select.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../js/base.js"></script>
+<script type="text/javascript" src="../js/yzgl.js"></script>
+<script type="text/javascript" src="../js/URL.js"></script>
+<script type="text/javascript" src="../js/checkVersion.js"></script>
+<script type="text/javascript" src="../js/config.js"></script>
+<script>
+		mui.init({
+			gestureConfig:{
+			   tap: true, //默认为true
+			   doubletap: false, //默认为false
+			   longtap: false, //默认为false
+			   swipe: false, //默认为true
+			   drag: false, //默认为true
+			   hold:false,//默认为false，不监听
+			   release:false//默认为false，不监听
+			}
+		});
+		window.addEventListener('setDept', function(e) {
+			var deptname = e.detail.deptname;
+			setDept(deptname);
+		});
+		window.addEventListener('loadDaiban', function(e) {
+			loadDaiban();
+		});
+
+		window.addEventListener('scanHome', function() {
+			scanAction();
+		});
+		
+		window.addEventListener('closeScanHome', function() {
+			scanner.close();
+		});
+		
+		$('.daiban-refres').on('tap','span',loadDaiban);
+
+		mui.plusReady(function() {
+			var indexdate = plus.webview.currentWebview().parent();
+			var emp = indexdate.emp;
+			var deptname = indexdate.deptname;
+			setEmp(emp.empname, emp.empid, emp.sex, deptname);
+			//扫描二维码
+			scanAction();
+			//适配设备
+			AdaptDevice();
+			//退出登录
+			signOut();
+			//利用键盘弹出窗口高度会改变来模拟键盘弹出事件
+			keybordEvent();
+			//根据不同系统类型做出相应适配
+			checkSysType();
+			//我的界面content高度设置为屏幕高度
+			$('#wd').height(document.documentElement.clientHeight);
+			//加载常用功能
+			//启动时加载待办事项
+			loadDaiban();
+			//绑定待办点击事件
+			onDaibanClick();
+			//打开选择病人窗口
+			checkVersion(false);
+			initWebSocket();
+			startInterval();
+		});
+		var yzPatientid = '';
+		//扫码监听
+		var tzlrFlag = 0;
+		var yzglFlag = 0;
+		var hzxsFlag = 0;
+
+		//定时检查待办信息
+		var interval_daiban;
+		//检查是否重复登录
+		var interval_checkRepeatLogin;
+	    function startInterval(){
+	    	interval_daiban = window.setInterval(function(){
+				loadDaiban();
+		    },1000*60);
+	    }
+
+	    //关闭定时
+		function stopInterval(){
+			window.clearInterval(interval_daiban);
+		}
+
+		/**
+		 * 打开病人列表
+		 */
+		function openPatient() {
+			mui.openWindow({
+				url: 'html/patientList.html',
+				id: 'patient',
+				extras: {
+					detail: 0,
+					tabFlag: 0,
+					qfflag: 1
+				}
+			});
+		}
+		/**
+		 * 适配设备
+		 */
+		function AdaptDevice() {
+			var deviceWidth = document.documentElement.clientWidth;
+			if(deviceWidth > 750) {
+				deviceWidth = 750;
+			} else if(deviceWidth > 360) {}
+		}
+		/**
+		 * 检查系统类别
+		 */
+		function checkSysType() {
+			var tabTop; //tabbar的magin-top 高度
+			if(mui.os.ios) {
+
+			} else { //安卓系统
+				tabTop = 3;
+			}
+			var navHeight = $('#navbar').height();
+			var tabGroupHeight = document.documentElement.clientHeight - plus.navigator.getStatusbarHeight() - navHeight - 60;
+
+			$('#yzglSiderGroup').height(tabGroupHeight);
+
+			$("#hzxscontent").height(document.documentElement.clientHeight - navHeight);
+		}
+
+		//设置员工信息
+		function setEmp(empname, empid, sex, deptname) {
+			$('#banner-empname').html(empname);
+			$('#banner-empid').html('工号:' + empid);
+			$('#banner-dept').html(deptname);
+
+			$('#empname').html(empname);
+			$('#empid').html('工号:' + empid);
+			$('#deptname').html(deptname);
+			if(sex == '1') {
+				$('#imgSex').attr('src', 'image/wd/ios-bgboy.png');
+			} else if(sex == '2') {
+				$('#imgSex').attr('src', 'image/wd/ios-bggril.png');
+			} else {
+				$('#imgSex').attr('src', 'image/wd/ios-bgwz.png');
+			}
+		}
+		//设置科室
+		function setDept(deptname) {
+			$('#banner-dept').html(deptname);
+		}
+
+		function hideChangeArea() {
+			$("#changeArea").hide();
+		}
+
+		//利用键盘弹出窗口高度会改变来模拟键盘弹出事件
+		function keybordEvent() {
+			var winHeight = $(window).height();
+			$(window).resize(function() {
+				var thisHeight = $(this).height();
+				if(winHeight - thisHeight > 50) {
+					//窗口发生改变(大),故此时键盘弹出
+					//当软键盘弹出，在这里面操作
+					$("#imgBottom").hide();
+				} else {
+					//窗口发生改变(小),故此时键盘收起
+					//当软键盘收起，在此处操作
+					$("#imgBottom").show();
+				}
+			});
+		}
+
+		//扫码监听
+		function scanAction() {
+			scanner.scan(function(data){
+				if(data.success) {
+					scanner.getBarCodeInfo(data);
+					var loginFlag = false;
+					var islogin = localStorage.getItem("islogin");
+					if('1' == islogin) {
+						loginFlag = true;
+					}
+					if(arr[0] == '1' && loginFlag) {
+						var tabFlag = plus.webview.currentWebview().tabFlag;
+						if(tabFlag == 1) { //体征录入选择病人
+							selectPatient(arr[1]);
+						} else if(tabFlag == 2) { //加载医嘱
+							selectPatient(arr[1]);
+							loadAdvince(arr[1]);
+						} else if(tabFlag == 3) { //患者巡视选择病人
+							selectPatient(arr[1]);
+						}else{
+							scanAction();
+						}
+					} else if(arr[0] == '2' && loginFlag) {
+						checkAdvinceStutas(arr[1], arr[2], arr[3],arr[4]);
+					}
+				} else {
+					scanAction(); //失败后重新注册扫码监听
+					mui.toast("扫码失败");
+					plus.device.beep("2");
+					return false;
+				}
+			},function(){
+				scanAction(); //失败后重新注册扫码监听
+				mui.toast("系统异常");
+				plus.device.beep("2");
+			});
+		}
+
+		var websocket = null;
+
+		function initWebSocket() {
+			var serverip = localStorage.getItem("serverip");
+			var loginid = localStorage.getItem("loginid");
+			var wsUrl="ws://"+serverip+"/deskNurse/websocket1/"+loginid;
+			window.WebSocket = window.WebSocket || window.MozWebSocket;
+			if(!window.WebSocket) {
+				mui.alert("你的微信版本不支持WebSocket,请升级至最新版微信!!!");
+				return;
+			}
+			websocket = new WebSocket(wsUrl);
+			window.setInterval(function(){
+				if(websocket.readyState!==1){
+					websocket.close();
+					websocket=new WebSocket(wsUrl);
+				}
+				websocket.send("heart");
+			},1000*200);
+
+			websocket.onopen=function(event){
+
+			}
+			websocket.onclose=function(){
+				websocket.close();
+				websocket=new WebSocket(wsUrl);
+			}
+			websocket.onerror=function(){
+				websocket.close();
+				websocket=new WebSocket(wsUrl);
+			}
+			//接收到消息的回调方法
+			websocket.onmessage = function(event) {
+				if(event.data == "001") {
+					DaibanSyInit();
+					DaibanSyHd();
+				}
+				if(event.data == "002") {
+					DaibanSyHd();
+					if(ISEXECWC){
+						DaibanSyZx();
+					}
+				}
+				if(event.data == "003") {
+					DaibanSyWc();
+					if(ISEXECWC){
+						DaibanSyZx();
+					}
+				}
+				if(event.data == "004") {
+					if(ISEXECWC){
+						DaibanSyZx();
+					}
+					DaibanSyWc();
+				}
+				if(event.data == "005") {
+					DaibanKf();
+				}
+				if(event.data == "006") {
+					DaibanZs();
+				}
+				if(event.data == "008") {
+					DaibanPs();
+				}
+				if(event.data == "009") {
+					DaibanWh();
+				}
+				if(event.data == "014") {
+					DaibanBbcj();
+				}
+			}
+			//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+			window.onbeforeunload = function() {
+				websocket.close();
+				stopInterval();
+			}
+		}
+	</script>
+</html>

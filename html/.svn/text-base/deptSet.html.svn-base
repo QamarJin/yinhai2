@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+	</head>
+
+	<body style="background: #FFF;">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span id="winTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;"></span>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+			<div style="width: 78%;margin: 40% auto;background: #FBFBFB;border-radius: 0.5rem;
+				border: 1px solid #0FA3E5;">
+				<ul class="mui-table-view" id="deptul">
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(function(){
+			init(plus.webview.currentWebview().type);
+		});
+		function init(type){
+			if(type=='area'){
+				$('#winTitle').html("病区设置");
+				initArea();
+			}else if(type=='dept'){
+				$('#winTitle').html("科室设置");
+				initDept();
+			}
+		}
+		
+		function initDept(){
+			var serverip = localStorage.getItem("serverip");
+			var hasArea = localStorage.getItem("hasArea");
+			//如果有病区，通过病区查询科室
+			if(hasArea==1){
+				var areaid = localStorage.getItem("areaid");
+				
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/getDeptByArea.do',
+			        data: {areaid: areaid},
+			        dataType: "json",
+			        success: function(data){
+			        	var dept = data;
+						$('#deptul').empty();
+						for(var i=0;i<dept.length;i++){
+							var li = '<li deptid="'+dept[i].deptid+'" class="mui-table-view-cell" style="text-align: center;color: #0FA3E5;">'+
+										dept[i].name+'</li>';
+							$('#deptul').append(li);
+						}
+						
+						deptClick('dept',hasArea);
+			        }
+			    });
+			}else{//没有病区通过empid查询科室
+				var empid = localStorage.getItem("loginid");
+				
+				$.ajax({
+			        type: 'POST',
+			        url: 'http://'+serverip+'/deskNurse/app/getDeptByEmp.do',
+			        data: {empid: empid},
+			        dataType: "json",
+			        success: function(data){
+			        	var dept = data;
+			        	$('#deptul').empty();
+						for(var i=0;i<dept.length;i++){
+							var li = '<li deptid="'+dept[i].deptid+'" class="mui-table-view-cell" style="text-align: center;color: #0FA3E5;">'+
+										dept[i].name+'</li>';
+							$('#deptul').append(li);
+						}
+						
+						deptClick('dept',hasArea);
+			        }
+			    });
+			}
+		}
+		
+		function initArea(){
+			var serverip = localStorage.getItem("serverip");
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getEmp.do',
+		        data: {loginid :localStorage.getItem("loginid")},
+		        dataType: "json",
+		        success: function(data){
+		        	var area = data.area;
+					$('#deptul').empty();
+					for(var i=0;i<area.length;i++){
+						var li = '<li deptid="'+area[i].areaid+'" class="mui-table-view-cell" style="text-align: center;color: #0FA3E5;">'+
+									area[i].name+'</li>';
+						$('#deptul').append(li);
+					}
+					
+					deptClick('area');
+		        }
+		    });
+			
+		}
+		
+		function deptClick(type,hasArea){
+			$('.mui-table-view-cell').on('tap',function(){
+				var id = $(this).attr("deptid");
+				if(type=='area'){
+					localStorage.setItem("areaid",id);
+					localStorage.removeItem("deptid");	
+					localStorage.removeItem("hasSetDept");
+					var deptname = $(this).text();
+					setPref(deptname);
+				}else{
+					if(hasArea==1){
+						localStorage.setItem("hasSetDept",1);
+					}
+					localStorage.setItem("deptid",id);
+					
+					var deptname = $(this).text();
+					setPref(deptname);
+				}
+				
+				$("#selectDept").hide();
+				var home = plus.webview.getWebviewById("home");
+				mui.fire(home,"loadDaiban");
+			});
+		}
+		
+		function setPref(deptname){
+			var wd = plus.webview.getWebviewById("wd");
+			var home = plus.webview.getWebviewById("home");
+			mui.fire(wd,"setDept",{deptname:deptname});
+			mui.fire(home,"setDept",{deptname:deptname});
+			mui.back();
+		}
+		
+	</script>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.sexImg{
+				margin-top: 1rem;
+				width: 4rem;
+				height: 4rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			
+			.sexImg.boy{
+				background-image:url('../image/hzcx/boy.png') ;
+			}
+			
+			.sexImg.girl{
+				background-image:url('../image/hzcx/girl.png') ;
+			}
+			.mui-col-sm-6{
+				line-height: 2rem;
+				width: 50%;
+				color: #666;
+				font-size: 0.9rem;
+			}
+			
+			#state{
+				border: 1px #0FA3E5 solid;
+				border-radius: 5px;
+				color: #0FA3E5;
+				font-size: 1rem;
+			}
+			.mui-toast-container {
+				bottom: 50% !important;
+			}
+			.mui-toast-message {
+				height: 4rem;
+				color: #fff;
+				line-height: 4rem; 
+				padding: 0;
+				font-size:1rem ;
+				background: #666666;
+				opacity:0.6;
+			}
+		</style>
+	</head>
+
+	<body style="background: #fff;">
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span class="mui-title" style="color: #FFF;font-size: 1.1rem;">输液配液</span>
+		</header>
+		<input type="hidden" id="patientid"/>
+		<div class="mui-content" style="background: #FFF;">
+			<div class="mui-row" style="height: 8rem;padding: 1rem 1rem;">
+				<div class="mui-col-sm-3" style="height: 6rem;width: 25%;" id="sex">
+				</div>
+				<div class="mui-col-sm-9" style="width: 75%;">
+					<div class="mui-row" style="height: 2rem;">
+						<div class="mui-col-sm-6" style="color: #2F2F2F;font-size: 1.1rem;">
+							姓名:<span id="pname"></span>
+						</div>
+						<div class="mui-col-sm-6">
+							<span id="state">待配液</span>
+						</div>
+					</div>
+					<div class="mui-row" style="height: 2rem;">
+						<div class="mui-col-sm-6">
+							床号:<span id="bedno"></span>
+						</div>
+						<div class="mui-col-sm-6">
+							住院号:<span id="zyh"></span>
+						</div>
+					</div>
+					<div class="mui-row" style="height: 2rem;">
+						<div class="mui-col-sm-6" >
+							护理级别:<span id="nlevel"></span>
+						</div>
+						<div class="mui-col-sm-6" >
+							医嘱类型:<span id="yztype"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="geduan"></div>
+			<div style="padding: 1rem 0.5rem;" id="items">
+				
+			</div>
+		</div>
+	</body>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/scanner.js" ></script>
+	<script type="text/javascript" src="../js/config.js" ></script>
+	<script type="text/javascript">
+		mui.init({
+			gestureConfig:{
+			   tap: true, //默认为true
+			   doubletap: false, //默认为false
+			   longtap: false, //默认为false
+			   swipe: false, //默认为true
+			   drag: false, //默认为true
+			   hold:false,//默认为false，不监听
+			   release:false//默认为false，不监听
+			},
+			beforeback:function(){
+				var home = plus.webview.getWebviewById("home");
+				mui.fire(home,'scanHome');
+			}
+		});
+		mui.plusReady(function(){
+			var home = plus.webview.getWebviewById("home");
+			mui.fire(home,'closeScanHome');
+			localStorage.removeItem("pqdata");
+			initPyScan();
+		});
+		
+		//扫码监听
+		function initPyScan() {
+			scanner.scan(function(data){
+				if(data.success) {
+					scanner.getBarCodeInfo(data);
+					var loginFlag = false;
+					var dataStr = localStorage.getItem("pqdata");
+					var islogin = localStorage.getItem("islogin");
+					if('1' == islogin) {
+						loginFlag = true;
+					}
+					if(arr[0] == '1' && loginFlag) {
+						mui.toast("扫的不是输液标签");
+						setTimeout(function(){
+			        		plus.device.beep("2");
+			        	},500);
+			        	initPyScan();
+					}else if(arr[0] == '2' && loginFlag) {
+						checkAdvinceStutas(arr[1], arr[2], arr[3],arr[4],data.value);
+					}
+				} else {
+					initPyScan(); //失败后重新注册扫码监听
+					mui.toast("扫码失败");
+					setTimeout(function(){
+		        		plus.device.beep("2");
+		        	},500);
+					return false;
+				}
+			},function(){
+				initPyScan(); //失败后重新注册扫码监听
+				mui.toast("系统异常");
+				setTimeout(function(){
+	        		plus.device.beep("2");
+	        	},500);
+			});
+		}
+		
+		function initData(patientid,groupno,printTimes,kdDate){
+			initPyScan();
+			localStorage.setItem("pqdata","2"+"_"+patientid+"_"+groupno+"_"+printTimes+"_"+kdDate);
+			var serverip = localStorage.getItem("serverip");
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getAdvinceByid.do',
+		        data: {patientid: patientid,groupno:groupno,printTimes:printTimes,kdDate:kdDate},
+		        dataType: "json",
+		        success: function(advince){
+		        	if(!advince){
+		        		mui.toast("没有获取到该条医嘱,请联系管理员");
+		        		setTimeout(function(){
+							plus.device.beep("2");
+						},500);
+						mui.back();
+						return;
+		        	}
+		        	$("#patientid").val(advince.patientid);
+					if(advince.sex=='1'){//性别
+						$("#sex").html('<div class="sexImg boy"></div>');
+					}else{
+						$("#sex").html('<div class="sexImg girl"></div>');
+					}
+					$("#pname").html(advince.pname);//姓名
+					$("#bedno").html(advince.bedno);
+					$("#zyh").html(advince.zyh);
+					var tmp_nvevel;
+					if(advince.nlevel){
+						tmp_nvevel = advince.nlevel;
+					}else{
+						tmp_nvevel = '一级';
+					}
+					$("#nlevel").html(tmp_nvevel);
+					$("#yztype").html(advince.yztype);
+					var arr_item = advince.itemname.split("$&");
+					var arr_dose = advince.dose.split("$&");
+					var arr_unit = advince.unit.split("$&");
+					$("#items").html('<div style="font-size: 1rem;padding-left: 40%;">'+advince.doctor_note+'</div>');
+					for(var i=0;i<arr_item.length;i++){
+						var item = '<div style="border-bottom: 1px solid #F2F2F2;">'+
+							'<div style="font-size: 1rem;padding-left: 0.5rem;">'+arr_item[i]+'</div>'+
+							'<div style="padding: 0.5rem 0.5rem;">'+
+								'<span style="color: #666;font-size: 0.9rem;">频次:'+advince.pinci+'</span>'+
+								'<span style="float: right;color: #666;font-size: 0.9rem;">剂量:'+arr_dose[i]+arr_unit[i]+'</span>'+
+							'</div>'+
+						'</div>';
+						$("#items").append(item);
+					}
+		        },error:function(e){
+		           alert(e.responseText);
+		           mui.back();
+		        }
+		    });
+		}
+		
+		function execAdvince(patientid,groupno,printTimes,kdDate){
+			var param = {};
+			param['patientid'] = patientid;
+			param['groupno'] = groupno;
+			param['printTimes'] = printTimes;
+			param['kdDate'] = kdDate;
+			param['executer'] = localStorage.getItem("loginid");
+
+			var serverip = localStorage.getItem("serverip");
+			
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/execPyAdvince.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	if(data.success){
+		        		mui.toast("配液成功");
+		        		$("#pname").html("");
+						$("#bedno").html("");
+						$("#zyh").html("");
+						$("#nlevel").html("");
+						$("#yztype").html("");
+		        		$("#items").html("");
+		        		localStorage.removeItem("pqdata");
+		        		if(!ISCLOSEPEIYE){
+		        			refreshScan();
+		        		}else{
+							initPyScan();
+		        		}
+					}else{
+						mui.alert('配液失败，请联系管理员');
+						setTimeout(function(){
+							plus.device.beep("2");
+						},500);
+						initPyScan();
+					}
+		        },error:function(e){
+		           alert(e.responseText);
+		           initPyScan();
+		        }
+		    });
+		}
+		
+		//检查医嘱状态
+		function checkAdvinceStutas(patientid,groupno,printTimes,kdDate,dataValue){
+			var serverip = localStorage.getItem("serverip");
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/checkAdvinceStutas.do',
+		        data: {patientid:patientid,groupno:groupno,printTimes:printTimes,kdDate:kdDate},
+		        dataType: "json",
+		        success: function(data){
+		        	if(data.stutas=="init"){
+		        		var dataStr = localStorage.getItem("pqdata");
+		        		if(dataValue == dataStr){
+		        			if(data.stop=='stop'){
+		        				mui.toast("该医嘱已停止!");
+		        				setTimeout(function(){
+					        		plus.device.beep("2");
+					        	},500);
+					        	initPyScan();
+				        		/*mui.confirm('该医嘱已停止，是否执行','',['确定','取消'],function(e){
+				                    if(e.index==0){
+				                        execAdvince(patientid,groupno,printTimes,kdDate);
+				                    }
+				                });*/
+				            }else if(data.outFlag!=0){
+				            	mui.toast("该病人已出院!");
+		        				setTimeout(function(){
+					        		plus.device.beep("2");
+					        	},500);
+					        	initPyScan();
+						        /*mui.confirm('该病人医生已下出院医嘱，是否执行','',['确定','取消'],function(e){
+			                        if(e.index==0){
+			                        	execAdvince(patientid,groupno,printTimes,kdDate);
+			                        }
+			                    });*/
+						    }else{
+								execAdvince(patientid,groupno,printTimes,kdDate);
+							}
+		        		}else{
+		        			initData(patientid,groupno,printTimes,kdDate);
+		        		}
+		        	}else {
+		        		mui.toast("该医嘱已配液")
+		        		setTimeout(function(){
+			        		plus.device.beep("2");
+			        	},500);
+			        	initPyScan();
+		        	}
+		        },error:function(e){
+		            initPyScan();
+		            alert(e.responseText);
+		        }
+		    });
+		}
+	</script>
+</html>

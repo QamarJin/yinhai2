@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.dbul{
+				padding: 0;
+				margin: 0;
+			}
+			.dbul>li{
+				list-style: none;
+			}
+			
+			.dbul>li{
+				border-bottom: 0.5rem #F6F6F6 solid;
+				padding: 0.5rem;
+			}
+			
+			.dbul>li>span{
+				color: #444444;
+			}
+			.sexImg{
+				margin-top: 0.7rem;
+				width: 2.5rem;
+				height: 2.5rem;
+				background-repeat:no-repeat ;
+				background-size:cover ;
+			}
+			
+			.sexImg.boy{
+				background-image:url('../image/hzcx/boy.png') ;
+			}
+			
+			.sexImg.girl{
+				background-image:url('../image/hzcx/girl.png') ;
+			}
+			
+			.my-card-content{
+				border-top: 1px #ECECEC solid;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span id="winTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">!扫描标本标签完成核对</span>
+		</header>
+		<div class="mui-content" style="background: #FFF;">
+			<input type="hidden" id='patientid' />
+			<ul id="daibanul" class="dbul">
+				
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/zepto.min.js" ></script>
+	<script type="text/javascript" src="../js/zepto.fx.js" ></script>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/scanner.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init({
+			beforeback:function(){
+				var vw = plus.webview.getWebviewById("daiban014");
+				mui.fire(vw,"scanBb");
+			}
+		});
+		mui.plusReady(function(){
+			var bbcj = plus.webview.currentWebview();
+			var nisList = bbcj.nisList;
+			var patientid = bbcj.patientid;
+			$("#patientid").val(patientid);
+			initNisList(patientid);
+			scanHdJy();
+		});
+		
+		var serverip = localStorage.getItem("serverip");
+		
+		function initNisList(patientid){
+			mui.ajax('http://'+serverip+'/deskNurse/app/getAdvinceByItem.do',{
+           		type: 'POST',
+		        data: {
+		        	patientid:patientid,
+		        	itemType:"jy",
+		        	isexec:0
+		        },
+		        dataType: "json",
+		        success: function(nisList){
+		        	if(nisList.length>0){
+		        		for(var i=0;i<nisList.length;i++){
+							localStorage.setItem(nisList[i].nisid,JSON.stringify(nisList[i]));
+							var item = '<li>'+
+								'<div class="mui-row" style="height: 4rem;">'+
+									'<div class="mui-col-sm-2" style="width: 17%;">';
+								var sexClass;
+								if(nisList[i].sex=='1'){
+									sexClass = 'boy';
+								}else{
+									sexClass = 'girl';
+								}
+								item+=	'<div class="sexImg '+sexClass+'"></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-4" style="width:33% ;">'+
+											'<div style="height: 2rem;"><span style="font-weight: 600;line-height: 2rem;">'+nisList[i].name+'</span></div>'+
+											'<div style="height: 2rem;"><span style="line-height: 2rem;">床号:</span><span style="color: #0FA3E5;line-height: 2rem;">'+nisList[i].bedno+'</span></div>'+
+									'</div>'+
+									'<div class="mui-col-sm-6" style="width: 49%;">'+
+										'<div><span style="float: right;line-height: 2rem;">住院号:'+nisList[i].zyh+'</span></div>';
+								
+								item+='</span></div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="my-card-content" >'+
+			                        '<ul class="myul-noborder">';
+			                    var arr = nisList[i].itemname.split('$&');
+			                    if(arr){
+			                    	for(var j=0;j<arr.length;j++){
+			                    		item+='<li>'+
+			                        			'<span class="yzglContent"><div class="transverse tr-blue"></div>'+arr[j]+'</span>'+
+			                        		  '</li>';
+			                    	}
+			                    }else{
+			                    	item+='<li>'+
+			                        		'<span class="yzglContent"><div class="transverse tr-blue"></div>'+advince[i].itemname+'</span>'+
+			                        	  '</li>';
+			                    }
+			                    item+= '</ul></div></li>';
+							$('#daibanul').append(item);
+						}
+		        	}else{
+		        		mui.toast('当前病人没有标本');
+		            	setTimeout(function(){
+		                    plus.device.beep("2");
+		                },500);
+		                var vw = plus.webview.getWebviewById("daiban014");
+						mui.fire(vw,"loadData");
+		                mui.back();
+		        	}
+		        }
+		    });
+		}
+
+		function scanHdJy(){
+			scanner.scan(function(data){
+				if(data.success){
+					if(localStorage.getItem(data.value)){
+						mui.ajax('http://'+serverip+'/deskNurse/app/checkJyIsExec.do',{
+							data:{'nisid':data.value},
+							type:'post',
+							dataType:'json',
+							success:function(count) {
+								if (count > 0) {
+									scanHdJy();
+									mui.toast("该标本已核对,请勿重复核对");
+								} else {
+									execJy(JSON.parse(localStorage.getItem(data.value)));
+								}
+							}
+						});
+					}else{
+						mui.toast("标本已核对或与病人不匹配");
+						setTimeout(function(){
+							plus.device.beep("2");
+						},500);
+						scanHdJy();
+					}
+				}
+		    }, function(){
+		        scanHdJy();//失败后重新注册扫码监听
+		        mui.toast("系统异常");
+		    })
+		}
+		
+		function execJy(nis){
+			var param = {};
+			param['patientid'] = nis.patientid;
+			param['groupno'] = nis.groupno;
+			param['printTimes'] = 0;
+			param['kdDate'] = nis.kddate;
+			param['executer'] = localStorage.getItem("loginid");
+			param['nisid'] =nis.nisid;
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/execJyAdvince.do',
+		        data: param,
+		        dataType: "json",
+		        success: function(data){
+		        	if(data.success){
+		        		localStorage.removeItem(nis.nisid);
+						mui.toast('核对成功');
+						$("#daibanul").html("");
+						initNisList($("#patientid").val());
+						scanHdJy();
+					}else{
+						mui.alert("完成失败，请联系管理员");
+						setTimeout(function(){
+							plus.device.beep("2");
+						},500);
+						scanHdJy();
+					}
+		        },
+		        error:function(){
+		        	scanHdJy();
+		        }
+		    });
+		}
+	</script>
+</html>

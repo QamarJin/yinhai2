@@ -1,0 +1,216 @@
+var pidList;
+function initHzxs(){
+	var serverip = localStorage.getItem("serverip");
+	
+	var param = {};
+	var hasArea = localStorage.getItem("hasArea");
+	param['hasArea']  = hasArea;
+	if(hasArea==1){
+		param['areaid'] = localStorage.getItem("areaid");
+	}else{
+		param['deptid'] = localStorage.getItem("deptid");
+	}
+	
+	var hasSetDept = localStorage.getItem("hasSetDept");
+	
+	if(hasSetDept == 1){
+		param['hasSetDept'] = 1;
+		param['deptid'] = localStorage.getItem("deptid");
+	}else{
+		param['hasSetDept'] = 0;
+	}
+			
+	$.ajax({
+        type: 'POST',
+        url: 'http://'+serverip+'/deskNurse/app/getPidByDeptid.do',
+        data: param,
+        dataType: "json",
+        success: function(data){
+        	pidList = data;
+        }
+    });
+    
+    $('#btnNextBed').on('tap',function(){
+    	selectNextPatient();
+    });
+}
+//下一床病人
+function selectNextPatient(){
+	if(hzxsFlag==0){
+		mui.toast('请扫描或者选择病人');
+		return;
+	}
+	for(var i=0;i<pidList.length;i++){
+		if(i<pidList.length-1){
+			if(pidList[i]==yzPatientid){
+				selectPatient(pidList[i+1]);
+				return;
+			}
+		}else{
+			mui.toast('已经是最后一床了');
+		}
+	}
+}
+
+function initHzxsData(){
+	var hasArea = localStorage.getItem("hasArea");
+	var areaid = localStorage.getItem("areaid");
+	var deptid = localStorage.getItem("deptid");
+	var serverip = localStorage.getItem("serverip");
+	mui.ajax("http://"+serverip+"/deskNurse/app/getHzxsTypeByArea.do",{
+		data:{"hasArea":hasArea,"areaid":areaid,"deptid":deptid},
+		type:'post',
+		dataType:"json",
+		success:function(hzxsTypes){
+			var f = $("#hzxsBtnGroup");
+			var item = "";
+			if(hzxsTypes){
+				for(var i=0;i<hzxsTypes.length;i++){
+					item +=  '<div type = "'+hzxsTypes[i].xs_code+'" class="mui-col-sm-6 my-block my-block-right mui-row">'+
+								'<div class="mui-col-sm-2">'+
+									'<img src="../image/hzxs/choose.png" />'+
+								'</div>'+
+								'<div class="mui-col-sm-10">'+
+									'<span>'+
+										hzxsTypes[i].xs_info+
+									'</span>'+
+								'</div>'+
+							'</div>'
+				}
+				f.append(item);
+				bindHzxsBtnClick();
+			}
+		},
+		error:function(e){
+			alert(e.responseText);
+		}
+	});
+}
+
+var hzxs_code;
+function bindHzxsBtnClick(){
+	//打开便签窗口
+    $('.my-icon-edit').bind('tap',function(){
+    	var flag = false;
+		if(hzxsFlag==0&&tabFlag==3){
+			flag = true;
+		}
+		if(flag){
+			mui.toast("请扫描或者选择病人");
+			return;
+		}
+    	mui('#divType').popover('show');
+    });
+	
+	$("#hzxsBtnGroup").children().bind('tap',function(){
+		$(this).children().first().children().show();
+		$($(this).siblings()).each(function(index,item){
+			$(item).children().first().children().hide();
+		});
+		hzxs_code = $(this).attr('type');
+	});
+	$('#btnSaveHzxs').on('tap',function(){
+		if(hzxsFlag==0){
+			mui.toast('请扫描或者选择病人');
+			return;
+		}
+		if(!hzxs_code){
+			mui.toast('请选择类别');
+			return;
+		}
+		plus.nativeUI.showWaiting();
+	    $("#btnSaveHzxs").attr("disabled","false");
+	    var note = 　$('#note').val();
+		var empid = localStorage.getItem("loginid"); 
+		var patientid= yzPatientid;
+		var code = hzxs_code;
+		var serverip = localStorage.getItem("serverip");
+		var task = plus.uploader.createUpload("http://"+serverip+ "/deskNurse/doctor/uploadNote.do", {
+				method: "POST"
+			},
+			function(t, status) { //上传完成
+				if(status == 200) {
+					mui.toast("保存成功");
+					$("#note").val("");
+					$("#picBox").html("");
+					$("#recordBox").html("");
+					photos=[];
+					audios=[];
+					$("#btnSaveHzxs").removeAttr("disabled");
+					selectNextPatient();
+					plus.nativeUI.closeWaiting();
+				} else {
+					mui.toast("保存失败");
+				}
+			}
+		);
+		if(note!=""){
+			task.addData('note', note);
+		}
+		
+		var hasArea = localStorage.getItem("hasArea");
+		if(hasArea==1){
+			task.addData('areaid',localStorage.getItem("areaid"));
+		}else{
+			task.addData('areaid',localStorage.getItem("deptid"));
+		}
+		task.addData('empid', empid);
+		task.addData('code', code);
+		task.addData('patientid', patientid);
+		if(photos.length>0){
+			for (var i=0;i<photos.length;i++) {
+				task.addFile(photos[i].path, {
+					key: 'photo'+i
+				});
+			}
+		}
+		if(audios.length>0){
+			for (var i=0;i<audios.length;i++) {
+				task.addFile(audios[i].name, {
+					key: audios[i].name
+				});
+			}
+		}
+		task.start();
+	});
+	
+	$("#btnCamera").bind('tap',function(){
+		mui('#divType').popover('hide');
+		UCam();
+	});
+	$("#btnAlbum").bind('tap',function(){
+		mui('#divType').popover('hide');
+		galleryPic("image");
+	});
+	
+	$("#btnVoice").bind('tap',function(){
+		mui('#divType').popover('hide');
+	});
+}
+
+
+function scanHzxs(){
+	scanner.scan(function(data){
+        if(data.success){
+            var arr = data.value.split('_');
+            var loginFlag = false;
+            var islogin = localStorage.getItem("islogin");
+            if('1'==islogin){
+                loginFlag = true;
+            }
+            if(arr[0]=='1'&&loginFlag){
+               //患者巡视选择病人
+                selectPatient(arr[1]);
+            }
+            scanHzxs();
+        }else{
+            scanHzxs();//失败后重新注册扫码监听
+            mui.toast("扫码失败");
+            return false;
+        }
+    }, function(){
+        scanHzxs();//失败后重新注册扫码监听
+        mui.toast("系统异常");
+    })
+}
+

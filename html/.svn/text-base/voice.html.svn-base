@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.mui-bar-nav {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+			.shenglang{
+				background-image:url(../image/wd/icon_backgra.png);
+				background-size:cover ;
+				background-repeat:no-repeat ; 
+				height: 5rem;
+				text-align: center;
+				font-size: 30px;
+				line-height: 5rem;
+				color: #FFF;
+			}
+			.voiceul{
+				padding: 0 0 0.5rem 0;
+				margin: 0;
+			}
+			.voiceul>li{
+				padding: 0.5rem 1rem 0.5rem 1rem ;
+				list-style: none;
+				height: 2rem;
+			}
+			.start{
+				margin:0 auto;
+				width: 4rem;
+				height: 4rem;
+				background-image:url(../image/wd/icon_star.png);
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.stop{
+				margin:0 auto;
+				width: 4rem;
+				height: 4rem;
+				background-image:url(../image/wd/icon_finish.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.tingtong{
+				width: 1.1rem;
+				height: 1.1rem;
+				background-image:url(../image/wd/icon_tingtong.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.waifang{
+				width: 1.1rem;
+				height: 1.1rem;
+				background-image:url(../image/wd/icon_waifang.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.startPlay{
+				width: 0.8rem;
+				height: 0.8rem;
+				margin: 0.2rem 0.2rem 0 0;
+				background-image:url(../image/wd/icon_play.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.stopPlay{
+				width: 0.8rem;
+				height: 0.8rem;
+				margin: 0.2rem 0.2rem 0 0;
+				background-image:url(../image/wd/icon_stop.png) ;
+				background-size:cover ;
+				background-repeat:no-repeat ;
+			}
+			.mui-progressbar span{
+				background-color: #0FA3E5;
+			}
+			.mui-table-view-cell{
+				padding: 0;
+			}
+			
+			.mui-table-view-cell:after{
+				background: #ECECEC;
+				left: 1rem;
+			}
+			.mui-popup-button {
+				color: #0FA3E5;
+			}
+		</style>
+	</head>
+
+	<body style="background: #F6F6F6;">
+		<header id="header" class="mui-bar mui-bar-nav header-android" style="margin: 0;">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<a style="float: right;margin-top: 1.1rem;">
+				<div id="playType" class="waifang"></div>
+			</a>
+		</header>
+		<div style="height: 15rem;background: #0FA3E5;padding-top: 4rem;">
+			<div id="timeCount" class="shenglang">
+				00:00:00
+			</div>
+			<div style="text-align: center;height: 6rem;padding-top: 1rem;">
+				<div id="btnRecord" class="start"></div>
+			</div>
+		</div>
+		<div>
+			<ul id="myul" class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">删除</a>
+					</div>
+					<div class="mui-slider-handle">
+						<ul class="voiceul">
+							<li>
+								<span style="color: #444;margin-left: 0.5rem;">录音</span>
+								<span style="color: #999;float: right;font-size:14px ;">2017/6/20</span>
+							</li>
+							<li>
+								<div class="mui-row">
+									<div class="mui-col-sm-3 mui-row play" style="width:20%;">
+										<div class="startPlay mui-col-sm-6"></div>
+										<div class="mui-col-sm-6" style="color: #999;font-size:12px;">00:00</div>
+									</div>
+									<div id="progressBar" class="mui-col-sm-8" style="width: 66%;">
+										<p style="margin-top: 0.33rem;height: 0.5rem;" class="mui-progressbar mui-progressbar-in" data-progress="20"><span></span></p>
+									</div>
+									<div class="mui-col-sm-1" style="width: 14%;text-align: right;">
+										<div style="color: #999;font-size:12px;margin: 0 auto;">05:33</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">删除</a>
+					</div>
+					<div class="mui-slider-handle">
+						<ul class="voiceul">
+							<li>
+								<span style="color: #444;margin-left: 0.5rem;">录音</span>
+								<span style="color: #999;float: right;font-size:14px ;">2017/6/20</span>
+							</li>
+							<li>
+								<div class="mui-row">
+									<div class="mui-col-sm-3 mui-row play" style="width:20%;">
+										<div class="stopPlay mui-col-sm-6"></div>
+										<div class="mui-col-sm-6" style="color: #999;font-size:12px;">00:00</div>
+									</div>
+									<div id="progressBar" class="mui-col-sm-8" style="width: 66%;">
+										<p style="margin-top: 0.33rem;height: 0.5rem;" class="mui-progressbar mui-progressbar-in" data-progress="20"><span></span></p>
+									</div>
+									<div class="mui-col-sm-1" style="width: 14%;text-align: right;">
+										<div style="color: #999;font-size:12px;margin: 0 auto;">05:33</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/mui.min.js" ></script>
+	<script type="text/javascript" src="../js/zepto.min.js" ></script>
+	<script type="text/javascript">
+		mui.init()
+		
+		$('#myul').on('tap', '.mui-btn', function(event) {
+			var elem = this;
+			var li = elem.parentNode.parentNode;
+			mui.confirm('确认删除该条记录？', '', ['确认', '取消'], function(e) {
+				if (e.index == 0) {
+					li.parentNode.removeChild(li);
+				} else {
+					setTimeout(function() {
+						mui.swipeoutClose(li);
+					}, 100);
+				}
+			});
+		});
+		
+		
+		var progressBar = mui('#progressBar');
+		mui(progressBar).progressbar().setProgress(30)
+		
+		$("#btnBack").bind('tap',function(){
+			md.closeWin();
+		});
+		
+		$("#btnRecord").bind('tap',function(){
+			if($(this).hasClass('start')){
+				$(this).removeClass('start');
+				$(this).addClass('stop');
+				
+				md.startRecord({
+				    path: 'fs://flvedio/test.amr'
+				},function(ret, err){
+				    if(ret.status){
+				         //开始录音
+				         console.log('=============开始录音============');
+				    }
+				});
+				//开始录音
+				startRecord();
+			}else{
+				$(this).removeClass('stop');
+				$(this).addClass('start');
+				stopRecord();
+			}
+		});
+		
+		$(".play").bind('tap',function(){
+			if($(this).children().first().hasClass('startPlay')){
+				$(this).children().first().removeClass('startPlay');
+				$(this).children().first().addClass('stopPlay');
+				startPaly();
+			}else{
+				$(this).children().first().removeClass('stopPlay');
+				$(this).children().first().addClass('startPlay');
+				stopPlay();
+			}
+		});
+		
+		$("#playType").bind('tap',function(){
+			if($(this).hasClass('waifang')){
+				$(this).removeClass('waifang');
+				$(this).addClass('tingtong');
+				md.setPlayMode({
+				    mode:1
+				});
+			}else{
+				$(this).removeClass('tingtong');
+				$(this).addClass('waifang');
+				md.setPlayMode({
+				    mode:0
+				});
+			}
+		});
+		
+		var timeCount = 0;
+		var startInterval;
+		function startRecord(){
+			startInterval = window.setInterval(function(){
+				timeCount++;
+				var html;
+				if(timeCount<10){
+					html = "00:00:0"+timeCount;
+				}else if(timeCount>=10&&timeCount<=59){
+					html = "00:00:"+timeCount;
+				}else if(timeCount>59){
+					var mCount = parseInt(timeCount/60);
+					var sCount = timeCount%60;
+					if(mCount<10){
+						if(sCount<10){
+							html = "00:0"+mCount+":0"+sCount;
+						}else{
+							html = "00:0"+mCount+":"+sCount;
+						}
+					}else{
+						if(sCount<10){
+							html = "00:"+mCount+":0"+sCount;
+						}else{
+							html = "00:"+mCount+":"+sCount;
+						}
+					}
+				}
+				$("#timeCount").html(html);
+			},1000);
+		}
+		
+		function stopRecord(){
+			timeCount=0;
+			window.clearInterval(startInterval);
+			md.stopRecord(function(ret, err){
+			    if(ret){
+			         var path = ret.path;
+			         var duration = ret.duration;
+			         console.log('=====path:'+path+"=======duration:"+duration+"=============");
+			    }   
+			});
+		}
+		
+		function startPaly(){
+			console.log("======开始播放===========")
+			md.startPlay({
+			    path: 'fs://flvedio/test.amr'
+			}, function(ret, err){
+			    console.log("======开始播放"+JSON.stringify(ret)+"===========")
+			});
+		}
+		
+		function stopPlay(){
+			md.stopPlay();
+			 console.log("======停止播放===========")
+		}
+		
+	</script>
+</html>

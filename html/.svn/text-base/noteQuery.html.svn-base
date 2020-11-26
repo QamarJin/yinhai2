@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/default-skin.css" />
+		<link rel="stylesheet" href="../css/photoswipe.css" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/common.css"/>
+		<style type="text/css">
+			.card{
+				overflow: auto;
+				box-shadow: 2px 6px 20px 10px rgba(71, 71, 71, 0.1);
+				padding: 1rem;
+				margin:1rem auto;
+				border-radius: 5px;
+			}
+			
+			.card-header{
+				height: 3rem;
+				border-bottom: 1px solid #D8D8D8
+			}
+			.card-header>span:first-child{
+				font-size: 1rem;
+			}
+			
+			.blue- {
+				color: #0FA1FF;
+				font-size: 2rem;
+			}
+			.textclass{
+				font-size: 1rem;
+				color: #000000;
+				letter-spacing: 2px;
+			}
+			.photoBorder{
+				float: left;
+				position:relative;
+				padding: 1rem;
+				box-shadow: 0 0 10px rgba(187, 187, 187, 0.4);
+			}
+			
+			img{
+				width: 100px;
+				height: 100px;
+			}
+			
+			.audioBorder{
+				float: left;
+				position:relative;
+				padding-right: 30px;
+			}
+			
+			#notebox {
+				background-color: #FFFFFF;
+			}
+			.notebox,
+			.photobox,
+			.recordbox {
+				float: left;
+				overflow: auto;
+				padding-top: 0.5rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid #D8D8D8;
+				width: 100%;
+			}
+			
+			audio{
+				width: 250px;
+			}
+			
+			.dateclear {
+				width: 100%;
+				overflow: auto;
+				float: left;
+			}
+			
+			.timebtn {
+				width: 60%;
+				height: 2.5rem;
+				border: 0px;
+				font-size: 1.2rem;
+				line-height: 2.5rem;
+				background-color: #F6F6F6;
+				display: block;
+				float: left;
+				color: #444444;
+				margin: 5px;
+				margin-top: 15px;
+				padding: 0;
+				box-shadow: 1px 3px 5px rgba(0,0,0,.1);
+			}
+			
+			.icon-clear {
+				width: 4rem;
+				height: 2.3rem;
+				background: rgba(15, 161, 255, 1);
+				color: #FFFFFF;
+				text-align: center;
+				line-height: 2.3rem;
+				border-radius: 5px;
+				margin-top: 17px;
+				margin-left: 0.6rem;
+				float: left;
+			}
+	        figure {
+	            float: left;
+	            margin: 1rem;
+	        }
+	        #begindate{
+	        	margin-bottom: 0.5rem;
+	        }
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav header-android">
+			<a id="btnBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFF;"></a>
+			<span id="noteTitle" class="mui-title" style="color: #FFF;font-size: 1.1rem;">请选择病人</span>
+            <a class="my-icon-sicker mui-icon mui-icon-bars mui-pull-right" href="javascript:void(0)" ></a>
+		</header>
+		<div class="mui-content">
+			<div class="dateclear">
+            	<button id='begindate' date-potion="" class="timebtn">点我选择日期</button>
+	            <div class="icon-clear">
+	                	重置
+	            </div>
+	        </div>
+			<div id="note_content">
+			</div>
+		</div>
+		<input type="hidden" id="patientid" />
+	</body>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/mui.picker.min.js" ></script>
+	<script type="text/javascript" src="../js/mui.poppicker.js" ></script>
+	<script src="../js/mui.zoom.js"></script>
+	<script type="text/javascript" src="../js/photoswipe.min.js" ></script>
+	<script type="text/javascript" src="../js/photoswipe-ui-default.min.js" ></script>
+	<script type="text/javascript" src="../js/picview.js" ></script>
+	<script src="../js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../js/URL.js" ></script>
+	<script type="text/javascript">
+		window.addEventListener("selectPatient",function(e){
+			var patientid = e.detail.id;
+			$("#patientid").val(patientid);
+			selectPatient(patientid);
+		});
+		mui.init();
+		mui.plusReady(function(){
+			$('.my-icon-sicker').on('tap',function(){
+				openPatient();
+			});
+		});
+		
+		//点击日期选择填出选择器
+		var dtpicker = new mui.DtPicker({
+		    type: "date"//设置日历初始视图模式
+		})
+		$(".timebtn").bind('tap',function(){
+			var id=$(this).attr("id");
+			dtpicker.show(function(selectItems) {//选择时间后的事件处理
+				var	time=selectItems.y.value+"-"+selectItems.m.value+"-"+selectItems.d.value
+				$("#"+id).html(time);
+				$("#"+id).attr("date-potion",time);
+				date_time = time;
+				var patientid = $("#patientid").val();
+				if(patientid){
+					loadNoteByPatientid(patientid,date_time);
+				}else{
+					mui.toast("请选择病人");
+				}
+			})
+		});
+		
+		//当前日期年月日
+		var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth()+1;
+        var day = now.getDate();
+        if(month<10){
+            month = "0"+month;
+        }else{
+            month = ""+month;
+        }
+        if(day<10){
+            day = "0"+day;
+        }else{
+            day = ""+day;
+        }
+		var now_date = year+"-"+month+"-"+day;
+		$("#begindate").html(now_date);
+		$(".icon-clear").bind('tap',function(){
+			$("#begindate").html(now_date);
+			$("#begindate").attr("date-potion","");
+			var patientid = $("#patientid").val();
+			if(patientid){
+				loadNoteByPatientid(patientid,now_date);
+			}else{
+				mui.toast("请选择病人");
+			}
+		});
+		
+		
+		function openPatient(){
+			mui.openWindow({
+				id: 'patient',
+			    url: 'patientList.html',
+			    extras: {detail:0,tabFlag:4},
+			});
+		}
+		
+		function selectPatient(patientid){
+			var serverip = localStorage.getItem("serverip");
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/selectPatient.do',
+		        data: {patientid:patientid},
+		        dataType: "json",
+		        success: function(data){
+		        	var html = data.pname+"&nbsp;&nbsp;"+data.bedno;
+					$('#noteTitle').html(html);
+		        }
+		    });
+		    var date_time = $("#begindate").html();
+			loadNoteByPatientid(patientid,date_time);
+		}
+		var photos=[];
+		
+		function loadNoteByPatientid(patientid,date){
+			photos=[];
+			var serverip = localStorage.getItem("serverip");
+			$.ajax({
+		        type: 'POST',
+		        url: 'http://'+serverip+'/deskNurse/app/getNoteByPatient.do',
+		        data: {patientid:patientid,date:date},
+		        dataType: "json",
+		        success: function(data){
+		        	$("#note_content").html('');
+		        	var dates = data.dates;
+		        	var noteList = data.noteList;
+		        	var noteItem="";
+		        	var picItem="";
+		        	var recoredItem="";
+		        	for(var i=0;i<dates.length;i++){
+		        		var lr_date = dates[i].lr_date;
+		        		var dateStr = dates[i].datestr;
+		        		var html='<div date_value="'+dateStr+'" class="card" id="card'+dateStr+'">'
+						$("#note_content").append(html);
+						$("#card"+dateStr).append('<div class="card-header header'+dateStr+'"></div>')
+						$("#card"+dateStr).append('<div class="notebox note'+dateStr+' " style="display: none;"></div>');
+						$("#card"+dateStr).append('<div id="'+dateStr+'" class="photobox photo'+dateStr+' " style="display: none;"></div>');
+						$("#card"+dateStr).append('<div class="recordbox record'+dateStr+' " style="display: none;"></div>');
+		        		for(var j=0;j<noteList.length;j++){
+		        			if(lr_date==noteList[j].lr_date){
+		        				$(".header"+dateStr).html('<span>巡视人:'+noteList[j].emp_name+'</span><span style="margin-left: 10%;">'+lr_date+'</span><p>巡视结果:'+noteList[j].xs_info+'</p>');
+		        				if(noteList[j].file_type=="text"){
+		        					var notehtml="";
+									notehtml+='<div id="t_'+noteList[j].id+'">';
+									notehtml+='<span class="blue-">-&nbsp;</span><span class="textclass">'+noteList[j].note+'</span>'
+									notehtml+='</br></div>';
+									$(".note"+dateStr).append(notehtml);
+									$(".note"+dateStr).css("display","block");
+		        				}else{
+									//文件数据库的路径
+									if("picture" == noteList[j].file_type) {
+										photos.push(URL_ST+noteList[j].file_name);
+										var photoHtml="";
+										photoHtml+='<div class="photoBorder" >'
+										photoHtml+='<figure><img class="imgClass" id="photo'+noteList[j].id+'" src="'+URL_ST+noteList[j].file_name+'" /></figure>'
+										photoHtml+='</div>'
+										$(".photo"+dateStr).append(photoHtml);
+										$(".photo"+dateStr).css("display","block");
+									}
+									if("audio" == noteList[j].file_type) {
+										var audioHtml="";
+										audioHtml+='<div class="audioBorder">';
+										audioHtml+='<audio controls="controls" src="'+URL_ST+noteList[j].file_name+'"></audio>'
+										audioHtml+='</div>'
+										$(".record"+dateStr).append(audioHtml);
+										$(".record"+dateStr).css("display","block");
+									}
+								}
+		        			}
+		        		}
+		        		$("#note_content").append("</div>");
+		        	}
+		        }
+		    });
+		}
+		
+		// 监听图片的点击
+	    mui('body').on('tap', '.imgClass', function() {
+	    	var path = $(this).attr("src");
+		    var index = photos.indexOf(path);
+		    plus.nativeUI.previewImage(photos, {
+		      current: index,
+		      loop: true,
+		      indicator: 'number'
+		    });
+	    });
+	</script>
+</html>
